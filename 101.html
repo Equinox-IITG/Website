@@ -59,10 +59,7 @@
             align-items: center;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-        }
+        .logo-container { display: flex; align-items: center; }
 
         .logo {
             width: 40px;
@@ -71,10 +68,7 @@
             margin-right: 10px;
         }
 
-        .logo-text {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
+        .logo-text { font-size: 1.2rem; font-weight: bold; }
 
         nav ul {
             display: flex;
@@ -116,16 +110,14 @@
             border-radius: 3px;
         }
 
+        /* Course Title */
         .course-title {
             margin-top: 80px;
             padding: 2rem 5%;
             text-align: center;
         }
 
-        .course-title h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+        .course-title h1 { font-size: 2.5rem; margin-bottom: 1rem; }
 
         .course-title .divider {
             width: 100px;
@@ -141,9 +133,8 @@
             color: #d4d4d4;
         }
 
-        .course-structure {
-            padding: 2rem 5%;
-        }
+        /* Course Structure */
+        .course-structure { padding: 2rem 5%; }
 
         .structure-heading {
             font-size: 2.5rem;
@@ -157,51 +148,103 @@
             color: #d4d4d4;
             text-align: center;
             max-width: 900px;
-            margin: 0 auto 2rem;
+            margin: 0 auto 3rem;
         }
 
-        .weeks-container {
+        /* Module Cards */
+        .modules-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 28px;
             margin-bottom: 3rem;
         }
 
-        .week-card {
+        .module-card {
             background-color: rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            padding: 1.5rem;
+            border-radius: 12px;
+            padding: 2rem;
             width: 100%;
-            max-width: 400px;
+            max-width: 370px;
+            transition: border-color 0.3s ease, transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .week-number {
-            font-size: 1.8rem;
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #fdcf58, #77b5fe);
+            border-radius: 12px 12px 0 0;
+        }
+
+        .module-card:hover {
+            border-color: rgba(253, 207, 88, 0.35);
+            transform: translateY(-4px);
+        }
+
+        .module-icon {
+            font-size: 2.2rem;
             margin-bottom: 1rem;
         }
 
-        .week-topics {
+        .module-number {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fdcf58;
+            margin-bottom: 0.4rem;
+        }
+
+        .module-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .module-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #d4d4d4;
+            margin-bottom: 1.2rem;
+        }
+
+        .module-topics {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 1rem;
+            gap: 8px;
+            margin-bottom: 1.2rem;
         }
 
-        .week-topic {
-            background-color: rgba(255, 255, 255, 0.1);
+        .module-topic {
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255,255,255,0.12);
             border-radius: 20px;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-        }
-
-        .week-description {
-            font-size: 0.95rem;
-            line-height: 1.5;
+            padding: 0.35rem 0.85rem;
+            font-size: 0.82rem;
             color: #d4d4d4;
         }
 
+        .module-tools {
+            font-size: 0.85rem;
+            color: #888;
+            border-top: 1px solid rgba(255,255,255,0.08);
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .module-tools span {
+            color: #fdcf58;
+            font-weight: bold;
+        }
+
+        /* Decorative Terms */
         .ml-terms {
             padding: 2rem 0;
             text-align: center;
@@ -244,10 +287,7 @@
             pointer-events: none;
         }
 
-        .register-icon {
-            font-size: 3rem;
-            margin-bottom: 1.2rem;
-        }
+        .register-icon { font-size: 3rem; margin-bottom: 1.2rem; }
 
         .register-box h3 {
             font-size: 1.9rem;
@@ -333,6 +373,8 @@
             nav ul.active { transform: translateY(0); opacity: 1; }
             nav ul li { margin: 1.5rem 0; }
             nav ul li a { font-size: 1.2rem; }
+
+            .module-card { max-width: 100%; }
         }
     </style>
 </head>
@@ -369,63 +411,66 @@
 
     <section class="course-structure">
         <h2 class="structure-heading">How is the course structured?</h2>
-        <p class="structure-info">This 4-week course takes you from basic astronomical concepts to advanced topics. The course is structured as follows:</p>
-        
-        <div class="weeks-container">
-            <div class="week-card">
-                <h3 class="week-number">Week 1</h3>
-                <div class="week-topics">
-                    <div class="week-topic">Early Universe</div>
-                    <div class="week-topic">Dark Matter</div>
-                    <div class="week-topic">Dark Energy</div>
-                    <div class="week-topic">Python Basics</div>
+        <p class="structure-info">Astronomy 101 is built around three core modules, each designed to give you a distinct and powerful lens through which to explore the universe.</p>
+
+        <div class="modules-container">
+
+            <!-- Module 1 -->
+            <div class="module-card">
+                <div class="module-icon">🌌</div>
+                <p class="module-number">Module 1</p>
+                <h3 class="module-title">Theoretical Astronomy</h3>
+                <p class="module-desc">Explore the fundamentals of astronomy and astrophysics through curated resources, lectures, and guided learning.</p>
+                <div class="module-topics">
+                    <span class="module-topic">Celestial Mechanics</span>
+                    <span class="module-topic">Light & Spectroscopy</span>
+                    <span class="module-topic">Planetary Systems</span>
+                    <span class="module-topic">Exoplanets</span>
+                    <span class="module-topic">Stellar Evolution</span>
+                    <span class="module-topic">Black Holes</span>
+                    <span class="module-topic">Galaxies & Cosmology</span>
+                    <span class="module-topic">Dark Matter</span>
+                    <span class="module-topic">Observational Concepts</span>
                 </div>
-                <p class="week-description">This week we'll discover the Big Bang story, learn about invisible dark forces shaping our universe, and explore cosmic mysteries. Plus, we'll introduce you to Python programming - the essential tool astronomers use for data analysis and research.</p>
             </div>
-            
-            <div class="week-card">
-                <h3 class="week-number">Week 2</h3>
-                <div class="week-topics">
-                    <div class="week-topic">Stars</div>
-                    <div class="week-topic">Stellar Evolution</div>
-                    <div class="week-topic">Linear Regression</div>
-                    <div class="week-topic">Logistic Regression</div>
+
+            <!-- Module 2 -->
+            <div class="module-card">
+                <div class="module-icon">💻</div>
+                <p class="module-number">Module 2</p>
+                <h3 class="module-title">Computational Astronomy</h3>
+                <p class="module-desc">Learn how astronomy and data science work together using Python and machine learning to analyze real cosmic data.</p>
+                <div class="module-topics">
+                    <span class="module-topic">Python from Scratch</span>
+                    <span class="module-topic">NumPy & Pandas</span>
+                    <span class="module-topic">Data Visualization</span>
+                    <span class="module-topic">Linear & Logistic Regression</span>
+                    <span class="module-topic">Gradient Descent</span>
+                    <span class="module-topic">KNN · SVM · Naive Bayes</span>
+                    <span class="module-topic">Decision Trees</span>
+                    <span class="module-topic">Neural Networks & LLMs</span>
                 </div>
-                <p class="week-description">This week we'll explore how stars are born, live, and die spectacularly - creating neutron stars and black holes along the way. We will also learn machine learning basics - how computers can find patterns in astronomical data automatically.</p>
+                <p class="module-tools"><span>Tools:</span> Python, NumPy, Pandas, Matplotlib, Scikit-learn, Jupyter Notebook</p>
             </div>
-            
-            <div class="week-card">
-                <h3 class="week-number">Week 3</h3>
-                <div class="week-topics">
-                    <div class="week-topic">Radio Astronomy</div>
-                    <div class="week-topic">Spectroscopy</div>
-                    <div class="week-topic">Observational Tools</div>
-                    <div class="week-topic">Evaluation Metrics</div>
-                    <div class="week-topic">Validation</div>
+
+            <!-- Module 3 -->
+            <div class="module-card">
+                <div class="module-icon">🔭</div>
+                <p class="module-number">Module 3</p>
+                <h3 class="module-title">Observational Astronomy & Astrophotography</h3>
+                <p class="module-desc">Gain practical experience in observing and imaging the night sky — from reading star maps to processing deep-space images.</p>
+                <div class="module-topics">
+                    <span class="module-topic">Reading the Night Sky</span>
+                    <span class="module-topic">Star Hopping</span>
+                    <span class="module-topic">Telescope Handling</span>
+                    <span class="module-topic">Polar Alignment</span>
+                    <span class="module-topic">Astrophotography</span>
+                    <span class="module-topic">FITS Data & Archives</span>
+                    <span class="module-topic">Image Calibration & Stacking</span>
+                    <span class="module-topic">Siril & Python Pipeline</span>
                 </div>
-                <p class="week-description">This week familarizes you with telescopes beyond what your eyes see and gravitational waves. We shall learn to evaluate how accurate our Machine Learning models are using some metrics and validation processes.</p>
             </div>
-            
-            <div class="week-card">
-                <h3 class="week-number">Week 4</h3>
-                <div class="week-topics">
-                    <div class="week-topic">Cosmic Diversity</div>
-                    <div class="week-topic">Celestial Identification</div>
-                    <div class="week-topic">Simulations</div>
-                    <div class="week-topic">Classification Models</div>
-                </div>
-                <p class="week-description">This week covers different cosmic objects and explore the biggest unsolved mysteries astronomers face today. We will learn in depth about classification algorithms - letting computers automatically sort stars, galaxies, and planets from observational data.</p>
-            </div>
-            
-            <div class="week-card">
-                <h3 class="week-number">Project</h3>
-                <div class="week-topics">
-                    <div class="week-topic">Final Project</div>
-                    <div class="week-topic">Presentation</div>
-                    <div class="week-topic">Peer Review</div>
-                </div>
-                <p class="week-description">This is dedicated to completing and presenting your first astronomy project in the club. You'll demonstrate mastery of course concepts through team research and analysis, culminating in a comprehensive presentation to the club.</p>
-            </div>
+
         </div>
     </section>
 
@@ -439,9 +484,8 @@
             <div class="register-icon">🚀</div>
             <h3>Course Starting Soon!</h3>
             <p class="launch-date">1st June 2025</p>
-            <p>Astronomy 101 starts on <strong>June 1st</strong>. If you haven’t registered yet, register now to get access to the course and stay updated with the latest announcements!</p>
-            <!-- Replace YOUR_FORM_LINK_HERE with the actual Google Form link -->
-            <a href="https://forms.gle/VzcEEZuw4xXKNkEs7" target="_blank" class="register-btn"> Register Now</a>
+            <p>Astronomy 101 starts on <strong>June 1st</strong>. If you haven't registered yet, register now to get access to the course and stay updated with the latest announcements!</p>
+            <a href="https://forms.gle/VzcEEZuw4xXKNkEs7" target="_blank" class="register-btn">⭐ Register Now</a>
         </div>
     </section>
 
@@ -487,9 +531,7 @@
         const hamburger = document.getElementById('hamburger-menu');
         const navMenu = document.getElementById('nav-menu');
 
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
+        hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
 
         document.querySelectorAll('nav ul li a').forEach(link => {
             link.addEventListener('click', () => navMenu.classList.remove('active'));
