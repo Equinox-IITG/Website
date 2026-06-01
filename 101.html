@@ -5,533 +5,951 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astronomy 101 - Equinox</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
+        :root {
+            --gold: #fdcf58;
+            --gold-dim: rgba(253,207,88,0.18);
+            --blue-star: #77b5fe;
+            --text-muted: #b0b0c0;
+            --card-bg: rgba(8, 8, 28, 0.7);
+            --border: rgba(255,255,255,0.09);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            background: linear-gradient(to bottom, #000000, #0a0a2a, #000000);
+            background: linear-gradient(to bottom, #000000, #060618, #000000);
             color: #fff;
+            font-family: 'Syne', sans-serif;
             overflow-x: hidden;
             min-height: 100vh;
         }
 
         #stars-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
-            overflow: hidden;
         }
 
         .star {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.1;
             animation: twinkle 2s infinite alternate;
         }
-        
-        .star:nth-child(3n) { background-color: #fff; }
-        .star:nth-child(3n+1) { background-color: #77b5fe; }
-        .star:nth-child(3n+2) { background-color: #fdcf58; }
+        .star:nth-child(3n)   { background: #fff; }
+        .star:nth-child(3n+1) { background: #77b5fe; }
+        .star:nth-child(3n+2) { background: #fdcf58; }
 
         @keyframes twinkle {
-            from { opacity: 0.4; }
-            to { opacity: 0.2; }
+            from { opacity: 0.5; }
+            to   { opacity: 0.15; }
         }
 
+        /* ── HEADER ─────────────────────────────────────────── */
         header {
-            position: fixed;
-            top: 0;
-            width: 100%;
+            position: fixed; top: 0; width: 100%;
             z-index: 1000;
             padding: 1rem 20px;
-            background-color: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid var(--border);
         }
 
         .logo-container { display: flex; align-items: center; }
+        .logo { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
+        .logo-text { font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
 
-        .logo {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .logo-text { font-size: 1.2rem; font-weight: bold; }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            flex-wrap: wrap;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
+        nav ul { display: flex; list-style: none; flex-wrap: wrap; justify-content: center; transition: all 0.3s; }
         nav ul li { margin: 0.5rem 1rem; }
-
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-            transition: color 0.3s ease;
-        }
-
+        nav ul li a { color: #fff; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1.5px; font-family: 'Space Mono', monospace; transition: color 0.3s; }
         nav ul li a:hover { color: #777778; }
-        nav ul li a.active { color: #fdcf58; }
-        nav ul li a.active:hover { color: #ae8e3c; }
+        nav ul li a.active { color: var(--gold); }
 
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 30px;
-            height: 21px;
-            cursor: pointer;
-        }
+        .hamburger { display: none; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; cursor: pointer; }
+        .hamburger span { display: block; height: 3px; width: 100%; background: #fff; border-radius: 3px; }
 
-        .hamburger span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background-color: #fff;
-            border-radius: 3px;
-        }
-
-        /* Course Title */
+        /* ── PAGE HERO ───────────────────────────────────────── */
         .course-title {
             margin-top: 80px;
-            padding: 2rem 5%;
+            padding: 3rem 5% 1.5rem;
             text-align: center;
         }
-
-        .course-title h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-
+        .course-title h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
         .course-title .divider {
-            width: 100px;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #ffffff, transparent);
-            margin: 0 auto 20px;
+            width: 100px; height: 2px;
+            background: linear-gradient(90deg, transparent, #fff, transparent);
+            margin: 1rem auto 1.2rem;
         }
-        
-        .course-title p {
-            font-size: 1.2rem;
-            max-width: 800px;
-            margin: 0 auto;
-            color: #d4d4d4;
-        }
+        .course-title p { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.7; }
 
-        /* Course Structure */
-        .course-structure { padding: 2rem 5%; }
-
-        .structure-heading {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
-
-        .structure-info {
-            font-size: 1.1rem;
-            line-height: 1.6;
-            color: #d4d4d4;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto 3rem;
-        }
-
-        /* Module Cards */
-        .modules-container {
+        /* ── MODULE TABS ─────────────────────────────────────── */
+        .module-tabs {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 28px;
-            margin-bottom: 3rem;
-        }
-
-        .module-card {
-            background-color: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem;
-            width: 100%;
-            max-width: 370px;
-            transition: border-color 0.3s ease, transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .module-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #fdcf58, #77b5fe);
-            border-radius: 12px 12px 0 0;
-        }
-
-        .module-card:hover {
-            border-color: rgba(253, 207, 88, 0.35);
-            transform: translateY(-4px);
-        }
-
-        .module-icon {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .module-number {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #fdcf58;
-            margin-bottom: 0.4rem;
-        }
-
-        .module-title {
-            font-size: 1.4rem;
-            font-weight: bold;
-            margin-bottom: 1rem;
-            color: #fff;
-        }
-
-        .module-desc {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #d4d4d4;
-            margin-bottom: 1.2rem;
-        }
-
-        .module-topics {
-            display: flex;
+            gap: 12px;
+            padding: 2.5rem 5% 0;
             flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 1.2rem;
         }
 
-        .module-topic {
-            background-color: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 20px;
-            padding: 0.35rem 0.85rem;
-            font-size: 0.82rem;
-            color: #d4d4d4;
-        }
-
-        .module-tools {
-            font-size: 0.85rem;
-            color: #888;
-            border-top: 1px solid rgba(255,255,255,0.08);
-            padding-top: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .module-tools span {
-            color: #fdcf58;
-            font-weight: bold;
-        }
-
-        /* Decorative Terms */
-        .ml-terms {
-            padding: 2rem 0;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 1.2rem;
+        .module-tab {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 0.6rem 1.4rem;
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.8rem;
             letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            transition: all 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .module-tab:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+        .module-tab.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+        .module-tab .tab-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.7;
         }
 
-        /* Register Section */
-        .register-section {
-            padding: 3rem 5%;
-            text-align: center;
-        }
+        /* ── MODULE PANELS ───────────────────────────────────── */
+        .modules-panels { padding: 2rem 5% 3rem; position: relative; z-index: 1; }
+        .module-panel { display: none; }
+        .module-panel.active { display: block; }
 
-        .register-section h2 {
-            font-size: 2rem;
+        .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 2rem;
         }
+        .panel-icon { font-size: 2.2rem; }
+        .panel-title { font-size: 1.9rem; font-weight: 800; }
+        .panel-subtitle { font-size: 0.9rem; color: var(--text-muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
 
-        .register-box {
-            max-width: 620px;
-            margin: 0 auto;
-            background-color: rgba(0, 0, 0, 0.45);
-            border: 1px solid rgba(253, 207, 88, 0.35);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            position: relative;
+        /* ── WEEK ACCORDION ──────────────────────────────────── */
+        .week-block { margin-bottom: 1.2rem; }
+
+        .week-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: border-color 0.25s, background 0.25s;
+            user-select: none;
+        }
+        .week-header:hover { border-color: rgba(255,255,255,0.2); }
+        .week-header.open {
+            border-color: rgba(253,207,88,0.4);
+            border-radius: 10px 10px 0 0;
+            background: rgba(253,207,88,0.05);
+        }
+
+        .week-header-left { display: flex; align-items: center; gap: 14px; }
+        .week-badge {
+            background: var(--gold-dim);
+            border: 1px solid rgba(253,207,88,0.35);
+            color: var(--gold);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .week-header-title { font-size: 1rem; font-weight: 700; }
+        .week-chevron {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        .week-header.open .week-chevron { transform: rotate(180deg); }
+
+        .week-body {
+            display: none;
+            border: 1px solid rgba(253,207,88,0.3);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            background: rgba(4,4,18,0.6);
+            padding: 0 0 0.5rem;
             overflow: hidden;
         }
+        .week-body.open { display: block; }
 
+        /* ── DAY BLOCK ───────────────────────────────────────── */
+        .day-block {
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .day-block:last-child { border-bottom: none; }
+
+        .day-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 0.9rem;
+        }
+        .day-number {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--blue-star);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            background: rgba(119,181,254,0.1);
+            border: 1px solid rgba(119,181,254,0.25);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
+        .day-title { font-size: 0.98rem; font-weight: 700; color: #fff; }
+
+        /* ── RESOURCE LINKS ──────────────────────────────────── */
+        .resource-list { display: flex; flex-direction: column; gap: 6px; }
+
+        .resource-link {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 0.55rem 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            text-decoration: none;
+            color: #d4d4e8;
+            font-size: 0.88rem;
+            line-height: 1.4;
+            transition: all 0.2s;
+        }
+        .resource-link:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .resource-link .link-icon {
+            flex-shrink: 0;
+            margin-top: 1px;
+            font-size: 0.9rem;
+        }
+        .resource-link.yt .link-icon   { color: #ff4e4e; }
+        .resource-link.web .link-icon  { color: var(--blue-star); }
+        .resource-link.book .link-icon { color: var(--gold); }
+        .resource-link.optional { border-style: dashed; opacity: 0.75; }
+        .resource-link.optional:hover { opacity: 1; }
+
+        .optional-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: var(--gold-dim);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            white-space: nowrap;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .book-note {
+            margin-top: 8px;
+            padding: 0.7rem 0.9rem;
+            background: rgba(253,207,88,0.04);
+            border: 1px dashed rgba(253,207,88,0.25);
+            border-radius: 7px;
+            font-size: 0.83rem;
+            color: #c8c8a0;
+            line-height: 1.5;
+        }
+        .book-note a { color: var(--gold); text-decoration: underline; }
+
+        /* ── COMING SOON WEEK ────────────────────────────────── */
+        .week-coming {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem 1.4rem;
+            background: var(--card-bg);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 1.2rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .week-coming .wc-badge {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            letter-spacing: 1px;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            white-space: nowrap;
+        }
+        .week-coming .wc-text { font-size: 0.9rem; }
+        .week-coming .wc-pill {
+            margin-left: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            white-space: nowrap;
+        }
+
+        /* ── MARQUEE ─────────────────────────────────────────── */
+        .ml-terms {
+            padding: 1.8rem 0;
+            overflow: hidden;
+            white-space: nowrap;
+            color: rgba(255,255,255,0.18);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 0.5rem 0 2rem;
+            position: relative; z-index: 1;
+        }
+        .ml-terms-inner {
+            display: inline-block;
+            animation: marquee 28s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
+
+        /* ── REGISTER ────────────────────────────────────────── */
+        .register-section {
+            padding: 2rem 5% 4rem;
+            text-align: center;
+            position: relative; z-index: 1;
+        }
+        .register-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 2rem; }
+        .register-box {
+            max-width: 600px; margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid rgba(253,207,88,0.35);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            position: relative; overflow: hidden;
+        }
         .register-box::before {
             content: '';
-            position: absolute;
-            top: -60px;
-            right: -60px;
-            width: 180px;
-            height: 180px;
+            position: absolute; top: -60px; right: -60px;
+            width: 180px; height: 180px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(253,207,88,0.08), transparent 70%);
-            pointer-events: none;
+            background: radial-gradient(circle, rgba(253,207,88,0.09), transparent 70%);
         }
-
         .register-icon { font-size: 3rem; margin-bottom: 1.2rem; }
-
-        .register-box h3 {
-            font-size: 1.9rem;
-            color: #fdcf58;
-            margin-bottom: 0.8rem;
-        }
-
-        .launch-date {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: #fff;
-            margin-bottom: 1.2rem;
-            letter-spacing: 1px;
-        }
-
-        .register-box p {
-            color: #d4d4d4;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
-        }
-
+        .register-box h3 { font-size: 1.8rem; color: var(--gold); margin-bottom: 0.7rem; font-weight: 800; }
+        .launch-date { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; font-family: 'Space Mono', monospace; }
+        .register-box p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
         .register-btn {
             display: inline-block;
             background: linear-gradient(135deg, #fdcf58, #f4b942);
             color: #000;
-            font-weight: bold;
-            font-size: 1.05rem;
+            font-weight: 700; font-size: 1rem;
             padding: 0.85rem 2.2rem;
             border-radius: 30px;
             text-decoration: none;
-            transition: all 0.25s ease;
-            box-shadow: 0 4px 18px rgba(253, 207, 88, 0.35);
+            transition: all 0.25s;
+            box-shadow: 0 4px 18px rgba(253,207,88,0.3);
             letter-spacing: 0.5px;
+            font-family: 'Syne', sans-serif;
         }
-
         .register-btn:hover {
-            background: linear-gradient(135deg, #f4b942, #e6a83a);
             transform: translateY(-2px);
-            box-shadow: 0 6px 22px rgba(253, 207, 88, 0.5);
+            box-shadow: 0 6px 24px rgba(253,207,88,0.5);
         }
 
+        /* ── FOOTER ──────────────────────────────────────────── */
         footer {
-            background-color: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.7);
             padding: 2rem 0;
             text-align: center;
-            margin-top: 3rem;
         }
+        .social-icons { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; }
+        .social-icons a { color: #717171; font-size: 1.2rem; transition: color 0.3s; }
+        .social-icons a:hover { color: var(--gold); }
 
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .social-icons a {
-            color: #717171;
-            font-size: 1.2rem;
-            transition: color 0.3s ease;
-        }
-
-        .social-icons a:hover { color: #fdcf58; }
-
+        /* ── RESPONSIVE ──────────────────────────────────────── */
         @media (max-width: 768px) {
             .hamburger { display: flex; z-index: 1001; }
-
             nav ul {
-                position: fixed;
-                flex-direction: column;
-                background-color: rgba(0,0,0,0.9);
-                width: 100%;
-                height: 100vh;
-                top: 0;
-                left: 0;
-                padding-top: 60px;
-                align-items: center;
-                justify-content: flex-start;
-                transform: translateY(-100%);
-                opacity: 0;
+                position: fixed; flex-direction: column;
+                background: rgba(0,0,0,0.95);
+                width: 100%; height: 100vh;
+                top: 0; left: 0; padding-top: 60px;
+                align-items: center; justify-content: flex-start;
+                transform: translateY(-100%); opacity: 0;
             }
-
             nav ul.active { transform: translateY(0); opacity: 1; }
             nav ul li { margin: 1.5rem 0; }
             nav ul li a { font-size: 1.2rem; }
-
-            .module-card { max-width: 100%; }
+            .course-title h1 { font-size: 2.2rem; }
+            .panel-title { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
-    <div id="stars-container"></div>
-    
-    <header>
-        <div class="logo-container">
-            <img src="sup_images\logo.png" alt="Logo" class="logo">
-            <span class="logo-text">Equinox</span>
+
+<div id="stars-container"></div>
+
+<header>
+    <div class="logo-container">
+        <img src="sup_images/logo.png" alt="Logo" class="logo">
+        <span class="logo-text">Equinox</span>
+    </div>
+    <nav>
+        <div class="hamburger" id="hamburger-menu"><span></span><span></span><span></span></div>
+        <ul id="nav-menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="#" class="active">Astronomy 101</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="team.html">Team</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="course-title">
+    <h1>Astronomy 101</h1>
+    <div class="divider"></div>
+    <p>Embark on a cosmic journey exploring the wonders of our universe — from celestial bodies to space exploration.</p>
+</section>
+
+<!-- MODULE TABS -->
+<div class="module-tabs" id="module-tabs">
+    <button class="module-tab active" data-panel="theoretical">
+        <span class="tab-dot"></span> 🌌 Theoretical
+    </button>
+    <button class="module-tab" data-panel="computational">
+        <span class="tab-dot"></span> 💻 Computational
+    </button>
+    <button class="module-tab" data-panel="observational">
+        <span class="tab-dot"></span> 🔭 Observational
+    </button>
+</div>
+
+<!-- PANELS -->
+<div class="modules-panels">
+
+    <!-- ════════════════════ THEORETICAL ════════════════════ -->
+    <div class="module-panel active" id="panel-theoretical">
+        <div class="panel-header">
+            <span class="panel-icon">🌌</span>
+            <div>
+                <div class="panel-title">Theoretical Astronomy</div>
+                <div class="panel-subtitle">Module 1 · Astrophysics &amp; Cosmology</div>
+            </div>
         </div>
-        <nav>
-            <div class="hamburger" id="hamburger-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul id="nav-menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="projects.html">Projects</a></li>
-                <li><a href="#" class="active">Astronomy 101</a></li>
-                <li><a href="resources.html">Resources</a></li>
-                <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="team.html">Team</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section class="course-title">
-        <h1>Astronomy 101</h1>
-        <div class="divider"></div>
-        <p>Embark on a cosmic journey exploring the wonders of our universe, from celestial bodies to space exploration.</p>
-    </section>
-
-    <section class="course-structure">
-        <h2 class="structure-heading">How is the course structured?</h2>
-        <p class="structure-info">Astronomy 101 is built around three core modules, each designed to give you a distinct and powerful lens through which to explore the universe.</p>
-
-        <div class="modules-container">
-
-            <!-- Module 1 -->
-            <div class="module-card">
-                <div class="module-icon">🌌</div>
-                <p class="module-number">Module 1</p>
-                <h3 class="module-title">Theoretical Astronomy</h3>
-                <p class="module-desc">Explore the fundamentals of astronomy and astrophysics through curated resources, lectures, and guided learning.</p>
-                <div class="module-topics">
-                    <span class="module-topic">Celestial Mechanics</span>
-                    <span class="module-topic">Light & Spectroscopy</span>
-                    <span class="module-topic">Planetary Systems</span>
-                    <span class="module-topic">Exoplanets</span>
-                    <span class="module-topic">Stellar Evolution</span>
-                    <span class="module-topic">Black Holes</span>
-                    <span class="module-topic">Galaxies & Cosmology</span>
-                    <span class="module-topic">Dark Matter</span>
-                    <span class="module-topic">Observational Concepts</span>
+        <!-- Week 1 -->
+        <div class="week-block">
+            <div class="week-header open" onclick="toggleWeek(this)">
+                <div class="week-header-left">
+                    <span class="week-badge">Week 1</span>
+                    <span class="week-header-title">Origins of the Universe &amp; Stellar Life</span>
                 </div>
+                <span class="week-chevron">▼</span>
             </div>
+            <div class="week-body open">
 
-            <!-- Module 2 -->
-            <div class="module-card">
-                <div class="module-icon">💻</div>
-                <p class="module-number">Module 2</p>
-                <h3 class="module-title">Computational Astronomy</h3>
-                <p class="module-desc">Learn how astronomy and data science work together using Python and machine learning to analyze real cosmic data.</p>
-                <div class="module-topics">
-                    <span class="module-topic">Python from Scratch</span>
-                    <span class="module-topic">NumPy & Pandas</span>
-                    <span class="module-topic">Data Visualization</span>
-                    <span class="module-topic">Linear & Logistic Regression</span>
-                    <span class="module-topic">Gradient Descent</span>
-                    <span class="module-topic">KNN · SVM · Naive Bayes</span>
-                    <span class="module-topic">Decision Trees</span>
-                    <span class="module-topic">Neural Networks & LLMs</span>
+                <!-- Day 1 -->
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 1</span>
+                        <span class="day-title">Big Bang Theory</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=wNDGgL73ihY" target="_blank">
+                            <span class="link-icon">▶</span> The Beginning of Everything
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=xtrYF_hxxUM" target="_blank">
+                            <span class="link-icon">▶</span> Evidence of The Big Bang
+                        </a>
+                        <a class="resource-link web" href="https://www.physicsoftheuniverse.com/topics_bigbang_timeline.html" target="_blank">
+                            <span class="link-icon">🌐</span> The First Few Minutes
+                        </a>
+                        <a class="resource-link web" href="https://science.nasa.gov/universe/overview/" target="_blank">
+                            <span class="link-icon">🌐</span> Timeline So Far — NASA
+                        </a>
+                        <div class="book-note">
+                            📖 Went curious? We recommend reading <strong>The First Three Minutes</strong> by Nobel Laureate Steven Weinberg —
+                            <a href="https://svetlogike.wordpress.com/wp-content/uploads/2014/02/15-steven-weinberg-the-first-three-minutes-a-moderm-view-of-the-origin-of-the-universe-1977.pdf" target="_blank">read it here</a>.
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Module 3 -->
-            <div class="module-card">
-                <div class="module-icon">🔭</div>
-                <p class="module-number">Module 3</p>
-                <h3 class="module-title">Observational Astronomy & Astrophotography</h3>
-                <p class="module-desc">Gain practical experience in observing and imaging the night sky — from reading star maps to processing deep-space images.</p>
-                <div class="module-topics">
-                    <span class="module-topic">Reading the Night Sky</span>
-                    <span class="module-topic">Star Hopping</span>
-                    <span class="module-topic">Telescope Handling</span>
-                    <span class="module-topic">Polar Alignment</span>
-                    <span class="module-topic">Astrophotography</span>
-                    <span class="module-topic">Image Calibration & Stacking</span>
+                <!-- Day 2 -->
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 2</span>
+                        <span class="day-title">After-Party of The Big Bang</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TBikbn5XJhg" target="_blank">
+                            <span class="link-icon">▶</span> Timelapse of The Universe
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=3tCMd1ytvWg" target="_blank">
+                            <span class="link-icon">▶</span> Cosmic Microwave Background
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=lInXZ6I3u_I" target="_blank">
+                            <span class="link-icon">▶</span> Nucleosynthesis
+                        </a>
+                        <div class="book-note">
+                            📖 Want to go deeper?<br>
+                            • <strong>A Brief History of Time</strong> by Stephen Hawking — <a href="https://www.fisica.net/relatividade/stephen_hawking_a_brief_history_of_time.pdf" target="_blank">read it here</a>.<br>
+                            • <strong>David Tong's Lectures on Cosmology</strong> — <a href="https://davidtong.org/pdfs/teaching/cosmology/cosmo.pdf" target="_blank">read it here</a>.
+                        </div>
+                    </div>
                 </div>
-            </div>
 
+                <!-- Day 3 -->
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 3</span>
+                        <span class="day-title">Galactic Genesis</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=n4vvuzIWOTE" target="_blank">
+                            <span class="link-icon">▶</span> Formation of Stars, Galaxies &amp; Clusters
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=rENyyRwxpHo" target="_blank">
+                            <span class="link-icon">▶</span> Our Home Supercluster
+                        </a>
+                        <a class="resource-link web" href="https://science.nasa.gov/universe/galaxies/evolution/" target="_blank">
+                            <span class="link-icon">🌐</span> Mechanisms of Galaxy Formation — NASA
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Pgz93gSoXlw" target="_blank">
+                            <span class="link-icon">▶</span> Cosmic Web
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Y4RtcJ_tWy4" target="_blank">
+                            <span class="link-icon">▶</span> Cosmic Voids
+                        </a>
+                        <a class="resource-link web" href="https://structures.uni-heidelberg.de/blog/posts/2022_12_cw/" target="_blank">
+                            <span class="link-icon">🌐</span> Mapping The Cosmic Web
+                        </a>
+                        <a class="resource-link yt optional" href="https://www.youtube.com/watch?v=77IxbBjcDps" target="_blank">
+                            <span class="link-icon">▶</span> Bonus Video
+                            <span class="optional-label">Optional</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Day 4 -->
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 4</span>
+                        <span class="day-title">Dark Matter &amp; Dark Energy</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=8-t-1EkOhAE" target="_blank">
+                            <span class="link-icon">▶</span> Why Dark Matter &amp; Energy?
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=QAa2O_8wBUQ" target="_blank">
+                            <span class="link-icon">▶</span> What is Dark Matter &amp; Dark Energy?
+                        </a>
+                        <a class="resource-link web" href="https://www.space.com/20930-dark-matter.html" target="_blank">
+                            <span class="link-icon">🌐</span> Shining Light on Dark Matter &amp; Energy
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=thxknsmN9yk" target="_blank">
+                            <span class="link-icon">▶</span> Some More Dark Matter &amp; Dark Energy
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=zZYHPSONxqI" target="_blank">
+                            <span class="link-icon">▶</span> M.O.N.D (Modified Newtonian Dynamics)
+                        </a>
+                        <a class="resource-link yt optional" href="https://www.youtube.com/watch?v=o79szJBtQ5E" target="_blank">
+                            <span class="link-icon">▶</span> Bonus Video
+                            <span class="optional-label">Optional</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Day 5 -->
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 5</span>
+                        <span class="day-title">Stellar Evolution &amp; Black Holes</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=a-rUtp7Alh8" target="_blank">
+                            <span class="link-icon">▶</span> Protostar Development
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TcRJYC5mvPI" target="_blank">
+                            <span class="link-icon">▶</span> T Tauri Phase
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Q7MG-LahuX4" target="_blank">
+                            <span class="link-icon">▶</span> A Star is Born
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4xIQGbYur9Q" target="_blank">
+                            <span class="link-icon">▶</span> Life Cycle of a Star
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=xYxyTZG7APQ" target="_blank">
+                            <span class="link-icon">▶</span> Supernovae Explosions
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=fFeV8WxIZLk" target="_blank">
+                            <span class="link-icon">▶</span> Neutron Stars
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=e-P5IFTqB98" target="_blank">
+                            <span class="link-icon">▶</span> Black Holes
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=kCrmN8C5uH0" target="_blank">
+                            <span class="link-icon">▶</span> Short Film — The Journey
+                        </a>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </section>
 
-    <div class="ml-terms">
-        Observation • Stellar Evolution • Cosmology • Gravitational Waves • Redshift • Planetary Science • Spectroscopy • Astrophysics • Radio Astronomy
+        <!-- Weeks 2, 3, 4 coming soon -->
+        <div class="week-coming">
+            <span class="wc-badge">Week 2</span>
+            <span class="wc-text">Light &amp; Spectroscopy · Planetary Systems · Exoplanets</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 3</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 4</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
     </div>
 
-    <section class="register-section">
-        <h2>Course Content</h2>
-        <div class="register-box">
-            <div class="register-icon">🚀</div>
-            <h3>Course Starting Soon!</h3>
-            <p class="launch-date">1st June 2026</p>
-            <p>Astronomy 101 starts on <strong>June 1st</strong>. If you haven't registered yet, register now to get access to the course and stay updated with the latest announcements!</p>
-            <a href="https://forms.gle/VzcEEZuw4xXKNkEs7" target="_blank" class="register-btn"> Register Now</a>
+    <!-- ════════════════════ COMPUTATIONAL ════════════════════ -->
+    <div class="module-panel" id="panel-computational">
+        <div class="panel-header">
+            <span class="panel-icon">💻</span>
+            <div>
+                <div class="panel-title">Computational Astronomy</div>
+                <div class="panel-subtitle">Module 2 · Python · Data Science · ML</div>
+            </div>
         </div>
-    </section>
 
-    <footer>
-        <div class="social-icons">
-            <a href="https://www.instagram.com/equinoxiitg/"><i class="fa fa-instagram"></i></a>
-            <a href="https://www.youtube.com/@equinox7889"><i class="fa fa-youtube-play"></i></a>
+        <!-- Week 1 -->
+        <div class="week-block">
+            <div class="week-header open" onclick="toggleWeek(this)">
+                <div class="week-header-left">
+                    <span class="week-badge">Week 1</span>
+                    <span class="week-header-title">Python Foundations &amp; Data Visualization</span>
+                </div>
+                <span class="week-chevron">▼</span>
+            </div>
+            <div class="week-body open">
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 1</span>
+                        <span class="day-title">Python from Scratch (Part I) + Jupyter Notebook Setup</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=K5KVEU3aaeQ" target="_blank">
+                            <span class="link-icon">▶</span> Python Tutorial — Watch till 1:06:33
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=PxMN8xT9NbA" target="_blank">
+                            <span class="link-icon">▶</span> Jupyter Notebook Setup
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=u9MIwoFWXVg" target="_blank">
+                            <span class="link-icon">▶</span> Python Basics — Supplementary
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 2</span>
+                        <span class="day-title">Python from Scratch (Part II)</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=K5KVEU3aaeQ" target="_blank">
+                            <span class="link-icon">▶</span> Python Tutorial — Complete Video
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=gOMW_n2-2Mw" target="_blank">
+                            <span class="link-icon">▶</span> Python OOP Concepts
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=MZZSMaEAC2g" target="_blank">
+                            <span class="link-icon">▶</span> Python for Data Science Crash Course
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 3</span>
+                        <span class="day-title">Data Manipulation (Part I) — NumPy</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=QUT1VHiLmmI" target="_blank">
+                            <span class="link-icon">▶</span> NumPy Full Tutorial
+                        </a>
+                        <a class="resource-link web" href="https://www.kaggle.com/code/orhansertkaya/numpy-tutorial-for-beginners#Computation-on-NumPy-Arrays:-Universal-Functions" target="_blank">
+                            <span class="link-icon">🌐</span> NumPy Tutorial for Beginners — Kaggle
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 4</span>
+                        <span class="day-title">Data Manipulation (Part II) — Pandas</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=2uvysYbKdjM" target="_blank">
+                            <span class="link-icon">▶</span> Pandas Full Tutorial
+                        </a>
+                        <a class="resource-link web" href="https://www.kaggle.com/code/ybifoundation/pandas-basic-functions" target="_blank">
+                            <span class="link-icon">🌐</span> Pandas Basic Functions — Kaggle
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 5</span>
+                        <span class="day-title">Data Visualization — Matplotlib &amp; Seaborn</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=UO98lJQ3QGI" target="_blank">
+                            <span class="link-icon">▶</span> Matplotlib Tutorial
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=nKxLfUrkLE8" target="_blank">
+                            <span class="link-icon">▶</span> Seaborn Tutorial
+                        </a>
+                        <a class="resource-link web" href="https://www.kaggle.com/code/prashant111/matplotlib-tutorial-for-beginners" target="_blank">
+                            <span class="link-icon">🌐</span> Matplotlib for Beginners — Kaggle
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=ooqXQ37XHMM&t=36s" target="_blank">
+                            <span class="link-icon">▶</span> Seaborn Crash Course
+                        </a>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </footer>
 
-    <script>
-        function getRandom(min, max) {
-            return Math.random() * (max - min) + min;
+        <div class="week-coming">
+            <span class="wc-badge">Week 2</span>
+            <span class="wc-text">Linear &amp; Logistic Regression · Gradient Descent</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 3</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 4</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+    </div>
+
+    <!-- ════════════════════ OBSERVATIONAL ════════════════════ -->
+    <div class="module-panel" id="panel-observational">
+        <div class="panel-header">
+            <span class="panel-icon">🔭</span>
+            <div>
+                <div class="panel-title">Observational Astronomy</div>
+                <div class="panel-subtitle">Module 3 · Stargazing · Astrophotography</div>
+            </div>
+        </div>
+
+        <!-- Week 1 -->
+        <div class="week-block">
+            <div class="week-header open" onclick="toggleWeek(this)">
+                <div class="week-header-left">
+                    <span class="week-badge">Week 1</span>
+                    <span class="week-header-title">Night Sky Basics &amp; Tools</span>
+                </div>
+                <span class="week-chevron">▼</span>
+            </div>
+            <div class="week-body open">
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 1</span>
+                        <span class="day-title">Basics of Stargazing</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=9P8Veb_AlJ0" target="_blank">
+                            <span class="link-icon">▶</span> Getting Oriented to the Night Sky — Stargazing Basics 1 of 3
+                        </a>
+                        <a class="resource-link yt" href="https://youtu.be/L-Wtlev6suc?si=wRxEc9nxcJG_cI_C" target="_blank">
+                            <span class="link-icon">▶</span> Stargazing Basics — Part 2
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 2</span>
+                        <span class="day-title">How to See Planets</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=rMQ5Yc6pJak" target="_blank">
+                            <span class="link-icon">▶</span> Spotting Planets in the Night Sky
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 3</span>
+                        <span class="day-title">All Constellations</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://youtu.be/3P2GVocbw9o?si=5h8GGQbzKHDV5x7I" target="_blank">
+                            <span class="link-icon">▶</span> Complete Guide to Constellations
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 4</span>
+                        <span class="day-title">Using Stellarium App &amp; Solar Positions</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://youtu.be/GnVqnGka9_Q?si=OLBHORELOwZNyrHO" target="_blank">
+                            <span class="link-icon">▶</span> How to Use Stellarium
+                        </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4LrT1SCKdcc&list=PLyu4Fovbph6eziCpngT3MZApDdrW5xDoW&index=6" target="_blank">
+                            <span class="link-icon">▶</span> Solar Positions Over a Year
+                        </a>
+                    </div>
+                </div>
+
+                <div class="day-block">
+                    <div class="day-label">
+                        <span class="day-number">Day 5</span>
+                        <span class="day-title">Hanle Observatory</span>
+                    </div>
+                    <div class="resource-list">
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=sSX7crssAUk" target="_blank">
+                            <span class="link-icon">▶</span> Inside the Hanle Observatory — India's High-Altitude Telescope
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="week-coming">
+            <span class="wc-badge">Week 2</span>
+            <span class="wc-text">Telescope Handling · Polar Alignment</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 3</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+        <div class="week-coming">
+            <span class="wc-badge">Week 4</span>
+            <span class="wc-text">Content not released yet</span>
+            <span class="wc-pill">Coming Soon</span>
+        </div>
+    </div>
+
+</div><!-- /modules-panels -->
+
+<!-- MARQUEE -->
+<div class="ml-terms">
+    <div class="ml-terms-inner">
+        Observation &nbsp;•&nbsp; Stellar Evolution &nbsp;•&nbsp; Cosmology &nbsp;•&nbsp; Gravitational Waves &nbsp;•&nbsp; Redshift &nbsp;•&nbsp; Planetary Science &nbsp;•&nbsp; Spectroscopy &nbsp;•&nbsp; Astrophysics &nbsp;•&nbsp; Radio Astronomy &nbsp;•&nbsp; Dark Matter &nbsp;•&nbsp; Nucleosynthesis &nbsp;•&nbsp; Exoplanets &nbsp;•&nbsp; Big Bang &nbsp;•&nbsp; CMB &nbsp;•&nbsp; Black Holes &nbsp;•&nbsp;
+        Observation &nbsp;•&nbsp; Stellar Evolution &nbsp;•&nbsp; Cosmology &nbsp;•&nbsp; Gravitational Waves &nbsp;•&nbsp; Redshift &nbsp;•&nbsp; Planetary Science &nbsp;•&nbsp; Spectroscopy &nbsp;•&nbsp; Astrophysics &nbsp;•&nbsp; Radio Astronomy &nbsp;•&nbsp; Dark Matter &nbsp;•&nbsp; Nucleosynthesis &nbsp;•&nbsp; Exoplanets &nbsp;•&nbsp; Big Bang &nbsp;•&nbsp; CMB &nbsp;•&nbsp; Black Holes &nbsp;•&nbsp;
+    </div>
+</div>
+
+<!-- REGISTER -->
+<section class="register-section">
+    <h2>Join The Course</h2>
+    <div class="register-box">
+        <div class="register-icon">🚀</div>
+        <h3>Course Is Live!</h3>
+        <p class="launch-date">Started 1st June 2026</p>
+        <p>Astronomy 101 has begun! If you haven't registered yet, register now to get access to all course material and stay updated with the latest announcements.</p>
+        <a href="https://forms.gle/VzcEEZuw4xXKNkEs7" target="_blank" class="register-btn">Register Now</a>
+    </div>
+</section>
+
+<footer>
+    <div class="social-icons">
+        <a href="https://www.instagram.com/equinoxiitg/"><i class="fa fa-instagram"></i></a>
+        <a href="https://www.youtube.com/@equinox7889"><i class="fa fa-youtube-play"></i></a>
+    </div>
+</footer>
+
+<script>
+    /* ── Stars ── */
+    const starsContainer = document.getElementById('stars-container');
+    function populateStars() {
+        starsContainer.innerHTML = '';
+        const n = Math.floor((window.innerWidth * window.innerHeight) / 1000);
+        const frag = document.createDocumentFragment();
+        for (let i = 0; i < n; i++) {
+            const s = document.createElement('div');
+            s.classList.add('star');
+            const sz = (Math.random() * 2 + 1) + 'px';
+            s.style.cssText = `width:${sz};height:${sz};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()}s`;
+            frag.appendChild(s);
         }
+        starsContainer.appendChild(frag);
+    }
+    populateStars();
+    window.addEventListener('resize', populateStars);
 
-        const starsContainer = document.getElementById('stars-container');
+    /* ── Hamburger ── */
+    const hamburger = document.getElementById('hamburger-menu');
+    const navMenu = document.getElementById('nav-menu');
+    hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+    document.querySelectorAll('nav ul li a').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
 
-        function createStar() {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            const size = getRandom(1, 3) + 'px';
-            star.style.width = size;
-            star.style.height = size;
-            star.style.left = getRandom(0, window.innerWidth) + 'px';
-            star.style.top = getRandom(0, window.innerHeight) + 'px';
-            star.style.opacity = getRandom(0.3, 0.8);
-            star.style.animationDelay = getRandom(0, 1) + 's';
-            return star;
-        }
-
-        function populateStars() {
-            starsContainer.innerHTML = '';
-            const numStars = Math.floor((window.innerWidth * window.innerHeight) / 1000);
-            for (let i = 0; i < numStars; i++) {
-                starsContainer.appendChild(createStar());
-            }
-        }
-
-        populateStars();
-        window.addEventListener('resize', populateStars);
-
-        const hamburger = document.getElementById('hamburger-menu');
-        const navMenu = document.getElementById('nav-menu');
-
-        hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-
-        document.querySelectorAll('nav ul li a').forEach(link => {
-            link.addEventListener('click', () => navMenu.classList.remove('active'));
+    /* ── Module Tabs ── */
+    document.querySelectorAll('.module-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.module-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+            tab.classList.add('active');
+            document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+            // scroll to tabs
+            document.getElementById('module-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
-    </script>
+    });
+
+    /* ── Week Accordion ── */
+    function toggleWeek(header) {
+        const isOpen = header.classList.contains('open');
+        header.classList.toggle('open', !isOpen);
+        const body = header.nextElementSibling;
+        body.classList.toggle('open', !isOpen);
+    }
+</script>
 </body>
 </html>
