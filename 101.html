@@ -338,6 +338,148 @@
             to   { transform: translateX(-50%); }
         }
 
+        /* ── QUIZ SECTION ────────────────────────────────────── */
+        .quiz-section {
+            padding: 2rem 5% 4rem;
+            text-align: center;
+            position: relative; z-index: 1;
+        }
+        .quiz-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.6rem; }
+        .quiz-section .quiz-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 2rem;
+        }
+
+        .quiz-box {
+            max-width: 680px; margin: 0 auto;
+            background: var(--card-bg);
+            border: 1px solid rgba(253,207,88,0.35);
+            border-radius: 16px;
+            padding: 2.2rem 2rem 2rem;
+            position: relative; overflow: hidden;
+            text-align: left;
+        }
+        .quiz-box::before {
+            content: '';
+            position: absolute; top: -60px; right: -60px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(253,207,88,0.09), transparent 70%);
+            pointer-events: none;
+        }
+
+        .quiz-box-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 1.4rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .quiz-box-icon { font-size: 2.4rem; line-height: 1; }
+        .quiz-box-title { font-size: 1.5rem; font-weight: 800; color: var(--gold); }
+        .quiz-box-tag {
+            margin-left: auto;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.25rem 0.7rem;
+            border-radius: 20px;
+            background: rgba(119,181,254,0.12);
+            border: 1px solid rgba(119,181,254,0.3);
+            color: var(--blue-star);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .quiz-intro-text {
+            font-size: 0.93rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+            margin-bottom: 1.5rem;
+        }
+
+        /* sections list */
+        .quiz-sections { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.6rem; }
+        .quiz-section-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 0.85rem 1rem;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+        .qsi-num {
+            flex-shrink: 0;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--gold-dim);
+            border: 1px solid rgba(253,207,88,0.4);
+            color: var(--gold);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .qsi-body {}
+        .qsi-title { font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
+        .qsi-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+
+        /* important note */
+        .quiz-note {
+            padding: 0.85rem 1rem;
+            background: rgba(253,207,88,0.04);
+            border: 1px dashed rgba(253,207,88,0.3);
+            border-radius: 9px;
+            font-size: 0.83rem;
+            color: #c8c8a0;
+            line-height: 1.6;
+            margin-bottom: 1.8rem;
+        }
+        .quiz-note strong { color: var(--gold); }
+
+        /* CTA buttons row */
+        .quiz-cta-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .quiz-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700; font-size: 0.92rem;
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.25s;
+            font-family: 'Syne', sans-serif;
+            letter-spacing: 0.4px;
+        }
+        .quiz-btn.primary {
+            background: linear-gradient(135deg, #fdcf58, #f4b942);
+            color: #000;
+            box-shadow: 0 4px 18px rgba(253,207,88,0.3);
+        }
+        .quiz-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(253,207,88,0.5);
+        }
+        .quiz-btn.secondary {
+            background: rgba(119,181,254,0.1);
+            border: 1px solid rgba(119,181,254,0.35);
+            color: var(--blue-star);
+        }
+        .quiz-btn.secondary:hover {
+            background: rgba(119,181,254,0.18);
+            border-color: rgba(119,181,254,0.6);
+            transform: translateY(-2px);
+        }
+
         /* ── REGISTER ────────────────────────────────────────── */
         .register-section {
             padding: 2rem 5% 4rem;
@@ -408,6 +550,9 @@
             nav ul li a { font-size: 1.2rem; }
             .course-title h1 { font-size: 2.2rem; }
             .panel-title { font-size: 1.5rem; }
+            .quiz-cta-row { flex-direction: column; }
+            .quiz-btn { justify-content: center; }
+            .quiz-box-tag { display: none; }
         }
     </style>
 </head>
@@ -894,17 +1039,58 @@
     </div>
 </div>
 
-<!-- REGISTER -->
-<section class="register-section">
-    <h2>Join The Course</h2>
-    <div class="register-box">
-        <div class="register-icon">🚀</div>
-        <h3>Course Is Live!</h3>
-        <p class="launch-date">Started 1st June 2026</p>
-        <p>Astronomy 101 has begun! If you haven't registered yet, register now and stay updated with the latest announcements.</p>
-        <a href="https://forms.gle/VzcEEZuw4xXKNkEs7" target="_blank" class="register-btn">Register Now</a>
+<!-- QUIZ SECTION -->
+<section class="quiz-section">
+    <h2>Week 1 Quiz</h2>
+    <p class="quiz-subtitle">Astronomy 101 · All Three Modules</p>
+    <div class="quiz-box">
+        <div class="quiz-box-header">
+            <span class="quiz-box-icon">📝</span>
+            <span class="quiz-box-title">Welcome to the Week 1 Quiz!</span>
+            <span class="quiz-box-tag">Week 1</span>
+        </div>
+        <p class="quiz-intro-text">
+            This quiz is divided into three sections. Please attempt all sections carefully.
+            Good luck, and enjoy exploring the universe!
+        </p>
+        <div class="quiz-sections">
+            <div class="quiz-section-item">
+                <span class="qsi-num">1</span>
+                <div class="qsi-body">
+                    <div class="qsi-title">Theory Module</div>
+                    <div class="qsi-desc">Questions covering the fundamental concepts discussed during Week 1.</div>
+                </div>
+            </div>
+            <div class="quiz-section-item">
+                <span class="qsi-num">2</span>
+                <div class="qsi-body">
+                    <div class="qsi-title">Observation Module</div>
+                    <div class="qsi-desc">Questions based on observational astronomy and sky exploration.</div>
+                </div>
+            </div>
+            <div class="quiz-section-item">
+                <span class="qsi-num">3</span>
+                <div class="qsi-body">
+                    <div class="qsi-title">Computational Module</div>
+                    <div class="qsi-desc">Questions and exercises related to the Week 1 computational notebook.</div>
+                </div>
+            </div>
+        </div>
+        <div class="quiz-note">
+            <strong>⚠️ Important:</strong> At the end of the Computational Module, you must submit the Google Drive link to your completed notebook. Please ensure that the notebook's sharing settings are set to <strong>"Anyone with the link can view"</strong> before submitting.
+        </div>
+        <div class="quiz-cta-row">
+            <a href="YOUR_GOOGLE_FORM_LINK_HERE" target="_blank" class="quiz-btn primary">
+                📋 Attempt the Quiz
+            </a>
+            <a href="YOUR_COLAB_NOTEBOOK_LINK_HERE" target="_blank" class="quiz-btn secondary">
+                🔗 Open Colab Notebook
+            </a>
+        </div>
     </div>
 </section>
+
+
 
 <footer>
     <div class="social-icons">
