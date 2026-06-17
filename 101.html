@@ -512,38 +512,8 @@
 
         /* ── LEADERBOARD STYLES ── */
         .lb-wrapper {
-            max-width: 860px;
+            max-width: 960px;
             margin: 0 auto;
-        }
-
-        .lb-stats-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 1.8rem;
-            flex-wrap: wrap;
-        }
-        .lb-stat {
-            flex: 1;
-            min-width: 120px;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1rem 1.2rem;
-            text-align: center;
-        }
-        .lb-stat .ls-val {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--gold);
-            font-family: 'Space Mono', monospace;
-        }
-        .lb-stat .ls-label {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            font-family: 'Space Mono', monospace;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 3px;
         }
 
         .lb-search-row {
@@ -639,7 +609,8 @@
             font-family: 'Space Mono', monospace;
             font-weight: 700;
         }
-        .lb-score-cell.active-week { color: var(--gold); }
+        .lb-score-cell.w1-col { color: var(--gold); }
+        .lb-score-cell.w2-col { color: var(--blue-star); }
         .lb-score-cell.locked {
             color: rgba(255,255,255,0.18);
             font-size: 0.75rem;
@@ -656,6 +627,7 @@
             background: rgba(255,255,255,0.07);
             border-radius: 3px;
             overflow: hidden;
+            min-width: 40px;
         }
         .score-bar-fill {
             height: 100%;
@@ -663,14 +635,22 @@
             background: linear-gradient(90deg, #fdcf58, #f4b942);
             transition: width 0.6s ease;
         }
+        .score-bar-fill.blue {
+            background: linear-gradient(90deg, #4a90d9, #77b5fe);
+        }
+        .score-bar-fill.total {
+            background: linear-gradient(90deg, #77b5fe, #fdcf58);
+        }
         .score-num {
             font-family: 'Space Mono', monospace;
             font-size: 0.8rem;
             font-weight: 700;
             color: var(--gold);
-            min-width: 32px;
+            min-width: 28px;
             text-align: right;
         }
+        .score-num.blue { color: var(--blue-star); }
+        .score-num.white { color: #fff; }
 
         .lb-lock-icon { opacity: 0.25; font-size: 0.8rem; }
 
@@ -690,6 +670,31 @@
             color: rgba(255,255,255,0.2);
             letter-spacing: 1px;
         }
+
+        /* Score legend pills */
+        .lb-legend {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+            align-items: center;
+        }
+        .lb-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+        .lb-legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+        .lb-legend-dot.gold  { background: var(--gold); }
+        .lb-legend-dot.blue  { background: var(--blue-star); }
+        .lb-legend-dot.white { background: #fff; }
 
         footer {
             background: rgba(0,0,0,0.7);
@@ -720,7 +725,7 @@
             .quiz-box-tag { display: none; }
             .lb-table thead th.hide-mobile { display: none; }
             .lb-table td.hide-mobile { display: none; }
-            .score-bar-wrap { min-width: 80px; }
+            .score-bar-wrap { min-width: 70px; }
         }
     </style>
 </head>
@@ -1355,6 +1360,13 @@
 
         <div class="lb-wrapper">
 
+            <!-- Legend -->
+            <div class="lb-legend">
+                <div class="lb-legend-item"><div class="lb-legend-dot gold"></div> Week 1 /48</div>
+                <div class="lb-legend-item"><div class="lb-legend-dot blue"></div> Week 2 /46</div>
+                <div class="lb-legend-item"><div class="lb-legend-dot white"></div> Total /94</div>
+            </div>
+
             <!-- Search -->
             <div class="lb-search-row">
                 <input class="lb-search" id="lb-search" type="text" placeholder="Search by name or code...">
@@ -1369,9 +1381,8 @@
                             <th>Name</th>
                             <th class="hide-mobile">Code</th>
                             <th class="center">Week 1 <span style="opacity:0.5;font-size:0.65rem">/48</span></th>
-                            <th class="center hide-mobile">Week 2</th>
-                            <th class="center hide-mobile">Week 3</th>
-                            <th class="center hide-mobile">Week 4</th>
+                            <th class="center hide-mobile">Week 2 <span style="opacity:0.5;font-size:0.65rem">/46</span></th>
+                            <th class="center">Total <span style="opacity:0.5;font-size:0.65rem">/94</span></th>
                         </tr>
                     </thead>
                     <tbody id="lb-tbody"></tbody>
@@ -1490,27 +1501,32 @@
     }
 
     // ════════════════════════════════════════════
-    // ── LEADERBOARD — reads from Leaderboard2026.xlsx (same folder) ──
-    // Excel columns expected: C = Name, D = Code, E = Score (Week 1)
+    // ── LEADERBOARD
+    // Excel columns expected:
+    //   Name = "name", Code = "code"
+    //   Week 1 score = column header containing "week 1" or "week1"  → out of 48
+    //   Week 2 score = column header containing "week 2" or "week2"  → out of 46
     // ════════════════════════════════════════════
-    const MAX_SCORE = 48;
+    const MAX_W1 = 48;
+    const MAX_W2 = 46;
     let LEADERBOARD_DATA = [];
 
     function renderLeaderboard(filter = '') {
         const tbody = document.getElementById('lb-tbody');
         const q = filter.toLowerCase().trim();
 
-        const sorted = [...LEADERBOARD_DATA].sort((a, b) => b.week1 - a.week1);
+        // Sort by total (week1 + week2) descending
+        const sorted = [...LEADERBOARD_DATA].sort((a, b) => (b.week1 + b.week2) - (a.week1 + a.week2));
         const filtered = sorted.filter(r =>
             r.name.toLowerCase().includes(q) || r.code.toLowerCase().includes(q)
         );
 
         if (LEADERBOARD_DATA.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="lb-empty">Loading scores...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="lb-empty">Loading scores...</td></tr>`;
             return;
         }
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="lb-empty">No results found for "${filter}"</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="lb-empty">No results found for "${filter}"</td></tr>`;
             return;
         }
 
@@ -1518,23 +1534,40 @@
             const rank = sorted.findIndex(r => r.code === row.code) + 1;
             const rankClass = rank <= 3 ? `rank-${rank}` : '';
             const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-            const pct = MAX_SCORE > 0 ? (row.week1 / MAX_SCORE * 100).toFixed(1) : 0;
+
+            const pct1     = MAX_W1 > 0 ? (row.week1 / MAX_W1 * 100).toFixed(1) : 0;
+            const pct2     = MAX_W2 > 0 ? (row.week2 / MAX_W2 * 100).toFixed(1) : 0;
+            const total    = row.week1 + row.week2;
+            const pctTotal = (MAX_W1 + MAX_W2) > 0 ? (total / (MAX_W1 + MAX_W2) * 100).toFixed(1) : 0;
 
             return `<tr class="${rankClass}">
                 <td class="lb-rank-cell"><span class="rank-medal">${medal}</span></td>
                 <td class="lb-name-cell">${row.name}</td>
                 <td class="lb-code-cell hide-mobile">${row.code}</td>
-                <td class="lb-score-cell active-week">
+                <td class="lb-score-cell w1-col">
                     <div class="score-bar-wrap">
                         <div class="score-bar-bg">
-                            <div class="score-bar-fill" style="width:${pct}%"></div>
+                            <div class="score-bar-fill" style="width:${pct1}%"></div>
                         </div>
                         <span class="score-num">${row.week1}</span>
                     </div>
                 </td>
-                <td class="lb-score-cell locked hide-mobile">—</td>
-                <td class="lb-score-cell locked hide-mobile">—</td>
-                <td class="lb-score-cell locked hide-mobile">—</td>
+                <td class="lb-score-cell w2-col hide-mobile">
+                    <div class="score-bar-wrap">
+                        <div class="score-bar-bg">
+                            <div class="score-bar-fill blue" style="width:${pct2}%"></div>
+                        </div>
+                        <span class="score-num blue">${row.week2}</span>
+                    </div>
+                </td>
+                <td class="lb-score-cell">
+                    <div class="score-bar-wrap">
+                        <div class="score-bar-bg">
+                            <div class="score-bar-fill total" style="width:${pctTotal}%"></div>
+                        </div>
+                        <span class="score-num white">${total}</span>
+                    </div>
+                </td>
             </tr>`;
         }).join('');
 
@@ -1557,30 +1590,38 @@
                 const sheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-                // Find header row (the one that has "Name" in it)
+                // Find header row containing "Name"
                 let headerIdx = rows.findIndex(r =>
                     r.some(cell => String(cell).toLowerCase().trim() === 'name')
                 );
-                if (headerIdx === -1) headerIdx = 0; // fallback: first row
+                if (headerIdx === -1) headerIdx = 0;
 
                 const headerRow = rows[headerIdx].map(c => String(c).toLowerCase().trim());
-                const nameCol  = headerRow.indexOf('name');
-                const codeCol  = headerRow.indexOf('code');
-                const scoreCol = headerRow.indexOf('score');
+                const nameCol = headerRow.indexOf('name');
+                const codeCol = headerRow.indexOf('code');
+
+                // Detect week 1 and week 2 score columns flexibly
+                const w1Col = headerRow.findIndex(h =>
+                    h.includes('week 1') || h.includes('week1') || h === 'score week 1'
+                );
+                const w2Col = headerRow.findIndex(h =>
+                    h.includes('week 2') || h.includes('week2') || h === 'score week 2'
+                );
 
                 LEADERBOARD_DATA = rows.slice(headerIdx + 1)
-                    .filter(r => r[nameCol] && r[codeCol]) // skip empty rows
+                    .filter(r => r[nameCol] && r[codeCol])
                     .map(r => ({
                         name:  String(r[nameCol] || '').trim(),
                         code:  String(r[codeCol] || '').trim(),
-                        week1: Number(r[scoreCol]) || 0,
+                        week1: Number(r[w1Col]) || 0,
+                        week2: w2Col >= 0 ? (Number(r[w2Col]) || 0) : 0,
                     }));
 
                 renderLeaderboard();
             })
             .catch(err => {
                 document.getElementById('lb-tbody').innerHTML =
-                    `<tr><td colspan="7" class="lb-empty">⚠️ Could not load Leaderboard2026.xlsx — ${err.message}</td></tr>`;
+                    `<tr><td colspan="6" class="lb-empty">⚠️ Could not load Leaderboard2026.xlsx — ${err.message}</td></tr>`;
             });
     };
     document.head.appendChild(sheetScript);
