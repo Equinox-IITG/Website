@@ -1,1633 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astronomy 101 - Equinox</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --gold: #fdcf58;
-            --gold-dim: rgba(253,207,88,0.18);
-            --blue-star: #77b5fe;
-            --text-muted: #b0b0c0;
-            --card-bg: rgba(8, 8, 28, 0.7);
-            --border: rgba(255,255,255,0.09);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: linear-gradient(to bottom, #000000, #060618, #000000);
-            color: #fff;
-            font-family: 'Syne', sans-serif;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        #stars-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            animation: twinkle 2s infinite alternate;
-        }
-        .star:nth-child(3n)   { background: #fff; }
-        .star:nth-child(3n+1) { background: #77b5fe; }
-        .star:nth-child(3n+2) { background: #fdcf58; }
-
-        @keyframes twinkle {
-            from { opacity: 0.5; }
-            to   { opacity: 0.15; }
-        }
-
-        header {
-            position: fixed; top: 0; width: 100%;
-            z-index: 1000;
-            padding: 1rem 20px;
-            background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo-container { display: flex; align-items: center; }
-        .logo { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
-        .logo-text { font-size: 1.2rem; font-weight: 800; letter-spacing: 1px; }
-
-        nav ul { display: flex; list-style: none; flex-wrap: wrap; justify-content: center; transition: all 0.3s; }
-        nav ul li { margin: 0.5rem 1rem; }
-        nav ul li a { color: #fff; text-decoration: none; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1.5px; font-family: 'Space Mono', monospace; transition: color 0.3s; }
-        nav ul li a:hover { color: #777778; }
-        nav ul li a.active { color: var(--gold); }
-
-        .hamburger { display: none; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; cursor: pointer; }
-        .hamburger span { display: block; height: 3px; width: 100%; background: #fff; border-radius: 3px; }
-
-        .course-title {
-            margin-top: 80px;
-            padding: 3rem 5% 1.5rem;
-            text-align: center;
-        }
-        .course-title h1 { font-size: 3rem; font-weight: 800; letter-spacing: -1px; }
-        .course-title .divider {
-            width: 100px; height: 2px;
-            background: linear-gradient(90deg, transparent, #fff, transparent);
-            margin: 1rem auto 1.2rem;
-        }
-        .course-title p { font-size: 1.1rem; color: var(--text-muted); max-width: 700px; margin: 0 auto; line-height: 1.7; }
-
-        .module-tabs {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            padding: 2.5rem 5% 0;
-            flex-wrap: wrap;
-        }
-
-        .module-tab {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            padding: 0.6rem 1.4rem;
-            cursor: pointer;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            transition: all 0.25s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .module-tab:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
-        .module-tab.active {
-            background: var(--gold-dim);
-            border-color: var(--gold);
-            color: var(--gold);
-        }
-        .module-tab .tab-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: currentColor;
-            opacity: 0.7;
-        }
-
-        .modules-panels { padding: 2rem 5% 3rem; position: relative; z-index: 1; }
-        .module-panel { display: none; }
-        .module-panel.active { display: block; }
-
-        .panel-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 2rem;
-        }
-        .panel-icon { font-size: 2.2rem; }
-        .panel-title { font-size: 1.9rem; font-weight: 800; }
-        .panel-subtitle { font-size: 0.9rem; color: var(--text-muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
-
-        .week-block { margin-bottom: 1.2rem; }
-
-        .week-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.4rem;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: border-color 0.25s, background 0.25s;
-            user-select: none;
-        }
-        .week-header:hover { border-color: rgba(255,255,255,0.2); }
-        .week-header.open {
-            border-color: rgba(253,207,88,0.4);
-            border-radius: 10px 10px 0 0;
-            background: rgba(253,207,88,0.05);
-        }
-
-        .week-header-left { display: flex; align-items: center; gap: 14px; }
-        .week-badge {
-            background: var(--gold-dim);
-            border: 1px solid rgba(253,207,88,0.35);
-            color: var(--gold);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-            white-space: nowrap;
-        }
-        .week-header-title { font-size: 1rem; font-weight: 700; }
-        .week-chevron {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            transition: transform 0.3s;
-        }
-        .week-header.open .week-chevron { transform: rotate(180deg); }
-
-        .week-body {
-            display: none;
-            border: 1px solid rgba(253,207,88,0.3);
-            border-top: none;
-            border-radius: 0 0 10px 10px;
-            background: rgba(4,4,18,0.6);
-            padding: 0 0 0.5rem;
-            overflow: hidden;
-        }
-        .week-body.open { display: block; }
-
-        .day-block {
-            padding: 1.2rem 1.4rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .day-block:last-child { border-bottom: none; }
-
-        .day-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 0.9rem;
-        }
-        .day-number {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
-            color: var(--blue-star);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            background: rgba(119,181,254,0.1);
-            border: 1px solid rgba(119,181,254,0.25);
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            white-space: nowrap;
-        }
-        .day-title { font-size: 0.98rem; font-weight: 700; color: #fff; }
-
-        .resource-list { display: flex; flex-direction: column; gap: 6px; }
-
-        .resource-link {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            padding: 0.55rem 0.8rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 7px;
-            text-decoration: none;
-            color: #d4d4e8;
-            font-size: 0.88rem;
-            line-height: 1.4;
-            transition: all 0.2s;
-        }
-        .resource-link:hover {
-            background: rgba(255,255,255,0.07);
-            border-color: rgba(255,255,255,0.2);
-            color: #fff;
-        }
-        .resource-link .link-icon {
-            flex-shrink: 0;
-            margin-top: 1px;
-            font-size: 0.9rem;
-        }
-        .resource-link.yt .link-icon   { color: #ff4e4e; }
-        .resource-link.web .link-icon  { color: var(--blue-star); }
-        .resource-link.book .link-icon { color: var(--gold); }
-        .resource-link.optional { border-style: dashed; opacity: 0.75; }
-        .resource-link.optional:hover { opacity: 1; }
-
-        .optional-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--gold);
-            background: var(--gold-dim);
-            padding: 0.15rem 0.5rem;
-            border-radius: 8px;
-            white-space: nowrap;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-
-        .book-note {
-            margin-top: 8px;
-            padding: 0.7rem 0.9rem;
-            background: rgba(253,207,88,0.04);
-            border: 1px dashed rgba(253,207,88,0.25);
-            border-radius: 7px;
-            font-size: 0.83rem;
-            color: #c8c8a0;
-            line-height: 1.5;
-        }
-        .book-note a { color: var(--gold); text-decoration: underline; }
-
-        .week-coming {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 1rem 1.4rem;
-            background: var(--card-bg);
-            border: 1px dashed rgba(255,255,255,0.1);
-            border-radius: 10px;
-            margin-bottom: 1.2rem;
-            color: rgba(255,255,255,0.3);
-        }
-        .week-coming .wc-badge {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
-            letter-spacing: 1px;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.1);
-            white-space: nowrap;
-        }
-        .week-coming .wc-text { font-size: 0.9rem; }
-        .week-coming .wc-pill {
-            margin-left: auto;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 0.2rem 0.6rem;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            white-space: nowrap;
-        }
-
-        .ml-terms {
-            padding: 1.8rem 0;
-            overflow: hidden;
-            white-space: nowrap;
-            color: rgba(255,255,255,0.18);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.9rem;
-            letter-spacing: 2px;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            margin: 0.5rem 0 2rem;
-            position: relative; z-index: 1;
-        }
-        .ml-terms-inner {
-            display: inline-block;
-            animation: marquee 28s linear infinite;
-        }
-        @keyframes marquee {
-            from { transform: translateX(0); }
-            to   { transform: translateX(-50%); }
-        }
-
-        .quiz-section {
-            padding: 2rem 5% 4rem;
-            text-align: center;
-            position: relative; z-index: 1;
-        }
-        .quiz-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.6rem; }
-        .quiz-section .quiz-subtitle {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            font-family: 'Space Mono', monospace;
-            margin-bottom: 2rem;
-        }
-
-        .quiz-box {
-            max-width: 680px; margin: 0 auto;
-            background: var(--card-bg);
-            border: 1px solid rgba(253,207,88,0.35);
-            border-radius: 16px;
-            padding: 2.2rem 2rem 2rem;
-            position: relative; overflow: hidden;
-            text-align: left;
-        }
-        .quiz-box::before {
-            content: '';
-            position: absolute; top: -60px; right: -60px;
-            width: 180px; height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(253,207,88,0.09), transparent 70%);
-            pointer-events: none;
-        }
-
-        .quiz-box-header {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 1.4rem;
-            padding-bottom: 1.2rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .quiz-box-icon { font-size: 2.4rem; line-height: 1; }
-        .quiz-box-title { font-size: 1.5rem; font-weight: 800; color: var(--gold); }
-        .quiz-box-tag {
-            margin-left: auto;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.65rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 0.25rem 0.7rem;
-            border-radius: 20px;
-            background: rgba(119,181,254,0.12);
-            border: 1px solid rgba(119,181,254,0.3);
-            color: var(--blue-star);
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-
-        .quiz-intro-text {
-            font-size: 0.93rem;
-            color: var(--text-muted);
-            line-height: 1.75;
-            margin-bottom: 1.5rem;
-        }
-
-        .quiz-sections { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.6rem; }
-        .quiz-section-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 0.85rem 1rem;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 9px;
-        }
-        .qsi-num {
-            flex-shrink: 0;
-            width: 26px; height: 26px;
-            border-radius: 50%;
-            background: var(--gold-dim);
-            border: 1px solid rgba(253,207,88,0.4);
-            color: var(--gold);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.72rem;
-            font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .qsi-body {}
-        .qsi-title { font-size: 0.92rem; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .qsi-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
-
-        .quiz-note {
-            padding: 0.85rem 1rem;
-            background: rgba(253,207,88,0.04);
-            border: 1px dashed rgba(253,207,88,0.3);
-            border-radius: 9px;
-            font-size: 0.83rem;
-            color: #c8c8a0;
-            line-height: 1.6;
-            margin-bottom: 1.8rem;
-        }
-        .quiz-note strong { color: var(--gold); }
-
-        .quiz-cta-row {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .quiz-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700; font-size: 0.92rem;
-            padding: 0.8rem 1.8rem;
-            border-radius: 30px;
-            text-decoration: none;
-            transition: all 0.25s;
-            font-family: 'Syne', sans-serif;
-            letter-spacing: 0.4px;
-        }
-        .quiz-btn.primary {
-            background: linear-gradient(135deg, #fdcf58, #f4b942);
-            color: #000;
-            box-shadow: 0 4px 18px rgba(253,207,88,0.3);
-        }
-        .quiz-btn.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(253,207,88,0.5);
-        }
-        .quiz-btn.secondary {
-            background: rgba(119,181,254,0.1);
-            border: 1px solid rgba(119,181,254,0.35);
-            color: var(--blue-star);
-        }
-        .quiz-btn.secondary:hover {
-            background: rgba(119,181,254,0.18);
-            border-color: rgba(119,181,254,0.6);
-            transform: translateY(-2px);
-        }
-
-        .register-section {
-            padding: 2rem 5% 4rem;
-            text-align: center;
-            position: relative; z-index: 1;
-        }
-        .register-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 2rem; }
-        .register-box {
-            max-width: 600px; margin: 0 auto;
-            background: var(--card-bg);
-            border: 1px solid rgba(253,207,88,0.35);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            position: relative; overflow: hidden;
-        }
-        .register-box::before {
-            content: '';
-            position: absolute; top: -60px; right: -60px;
-            width: 180px; height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(253,207,88,0.09), transparent 70%);
-        }
-        .register-icon { font-size: 3rem; margin-bottom: 1.2rem; }
-        .register-box h3 { font-size: 1.8rem; color: var(--gold); margin-bottom: 0.7rem; font-weight: 800; }
-        .launch-date { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 1.2rem; font-family: 'Space Mono', monospace; }
-        .register-box p { color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin-bottom: 1.5rem; }
-        .register-btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #fdcf58, #f4b942);
-            color: #000;
-            font-weight: 700; font-size: 1rem;
-            padding: 0.85rem 2.2rem;
-            border-radius: 30px;
-            text-decoration: none;
-            transition: all 0.25s;
-            box-shadow: 0 4px 18px rgba(253,207,88,0.3);
-            letter-spacing: 0.5px;
-            font-family: 'Syne', sans-serif;
-        }
-        .register-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(253,207,88,0.5);
-        }
-
-        /* ── LEADERBOARD STYLES ── */
-        .lb-wrapper {
-            max-width: 960px;
-            margin: 0 auto;
-        }
-
-        .lb-search-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 1.2rem;
-            align-items: center;
-        }
-        .lb-search {
-            flex: 1;
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 0.65rem 1rem;
-            color: #fff;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.82rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .lb-search::placeholder { color: rgba(255,255,255,0.25); }
-        .lb-search:focus { border-color: rgba(253,207,88,0.4); }
-
-        .lb-table-wrap {
-            background: var(--card-bg);
-            border: 1px solid rgba(253,207,88,0.25);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .lb-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .lb-table thead tr {
-            background: rgba(253,207,88,0.07);
-            border-bottom: 1px solid rgba(253,207,88,0.2);
-        }
-        .lb-table thead th {
-            padding: 0.85rem 1rem;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--gold);
-            font-weight: 700;
-            text-align: left;
-            white-space: nowrap;
-        }
-        .lb-table thead th.center { text-align: center; }
-
-        .lb-table tbody tr {
-            border-bottom: 1px solid var(--border);
-            transition: background 0.18s;
-        }
-        .lb-table tbody tr:last-child { border-bottom: none; }
-        .lb-table tbody tr:hover { background: rgba(255,255,255,0.035); }
-
-        /* top-3 highlight rows */
-        .lb-table tbody tr.rank-1 { background: rgba(253,207,88,0.07); }
-        .lb-table tbody tr.rank-2 { background: rgba(192,192,220,0.05); }
-        .lb-table tbody tr.rank-3 { background: rgba(176,120,80,0.05); }
-        .lb-table tbody tr.rank-1:hover { background: rgba(253,207,88,0.11); }
-        .lb-table tbody tr.rank-2:hover { background: rgba(192,192,220,0.09); }
-        .lb-table tbody tr.rank-3:hover { background: rgba(176,120,80,0.09); }
-
-        .lb-table td {
-            padding: 0.78rem 1rem;
-            font-size: 0.9rem;
-            vertical-align: middle;
-        }
-
-        .lb-rank-cell {
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-            font-weight: 700;
-            width: 52px;
-        }
-        .rank-medal { font-size: 1.1rem; }
-
-        .lb-name-cell { font-weight: 700; color: #fff; }
-        .lb-code-cell {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.78rem;
-            color: var(--blue-star);
-            white-space: nowrap;
-        }
-
-        .lb-score-cell {
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-            font-weight: 700;
-        }
-        .lb-score-cell.w1-col { color: var(--gold); }
-        .lb-score-cell.w2-col { color: var(--blue-star); }
-        .lb-score-cell.locked {
-            color: rgba(255,255,255,0.18);
-            font-size: 0.75rem;
-        }
-
-        .score-bar-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .score-bar-bg {
-            flex: 1;
-            height: 5px;
-            background: rgba(255,255,255,0.07);
-            border-radius: 3px;
-            overflow: hidden;
-            min-width: 40px;
-        }
-        .score-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            background: linear-gradient(90deg, #fdcf58, #f4b942);
-            transition: width 0.6s ease;
-        }
-        .score-bar-fill.blue {
-            background: linear-gradient(90deg, #4a90d9, #77b5fe);
-        }
-        .score-bar-fill.total {
-            background: linear-gradient(90deg, #77b5fe, #fdcf58);
-        }
-        .score-num {
-            font-family: 'Space Mono', monospace;
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--gold);
-            min-width: 28px;
-            text-align: right;
-        }
-        .score-num.blue { color: var(--blue-star); }
-        .score-num.white { color: #fff; }
-
-        .lb-lock-icon { opacity: 0.25; font-size: 0.8rem; }
-
-        .lb-empty {
-            text-align: center;
-            padding: 2.5rem 1rem;
-            color: var(--text-muted);
-            font-family: 'Space Mono', monospace;
-            font-size: 0.85rem;
-        }
-
-        .lb-updated {
-            text-align: right;
-            margin-top: 0.8rem;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.2);
-            letter-spacing: 1px;
-        }
-
-        /* Score legend pills */
-        .lb-legend {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 1rem;
-            align-items: center;
-        }
-        .lb-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Space Mono', monospace;
-            font-size: 0.7rem;
-            letter-spacing: 1px;
-            color: var(--text-muted);
-        }
-        .lb-legend-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-        }
-        .lb-legend-dot.gold  { background: var(--gold); }
-        .lb-legend-dot.blue  { background: var(--blue-star); }
-        .lb-legend-dot.white { background: #fff; }
-
-        footer {
-            background: rgba(0,0,0,0.7);
-            padding: 2rem 0;
-            text-align: center;
-        }
-        .social-icons { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1rem; }
-        .social-icons a { color: #717171; font-size: 1.2rem; transition: color 0.3s; }
-        .social-icons a:hover { color: var(--gold); }
-
-        @media (max-width: 768px) {
-            .hamburger { display: flex; z-index: 1001; }
-            nav ul {
-                position: fixed; flex-direction: column;
-                background: rgba(0,0,0,0.95);
-                width: 100%; height: 100vh;
-                top: 0; left: 0; padding-top: 60px;
-                align-items: center; justify-content: flex-start;
-                transform: translateY(-100%); opacity: 0;
-            }
-            nav ul.active { transform: translateY(0); opacity: 1; }
-            nav ul li { margin: 1.5rem 0; }
-            nav ul li a { font-size: 1.2rem; }
-            .course-title h1 { font-size: 2.2rem; }
-            .panel-title { font-size: 1.5rem; }
-            .quiz-cta-row { flex-direction: column; }
-            .quiz-btn { justify-content: center; }
-            .quiz-box-tag { display: none; }
-            .lb-table thead th.hide-mobile { display: none; }
-            .lb-table td.hide-mobile { display: none; }
-            .score-bar-wrap { min-width: 70px; }
-        }
-    </style>
-</head>
-<body>
-
-<div id="stars-container"></div>
-
-<header>
-    <div class="logo-container">
-        <img src="sup_images/logo.png" alt="Logo" class="logo">
-        <span class="logo-text">Equinox</span>
-    </div>
-    <nav>
-        <div class="hamburger" id="hamburger-menu"><span></span><span></span><span></span></div>
-        <ul id="nav-menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="projects.html">Projects</a></li>
-            <li><a href="#" class="active">Astronomy 101</a></li>
-            <li><a href="resources.html">Resources</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="team.html">Team</a></li>
-        </ul>
-    </nav>
-</header>
-
-<section class="course-title">
-    <h1>Astronomy 101</h1>
-    <div class="divider"></div>
-    <p>Embark on a cosmic journey exploring the wonders of our universe — from celestial bodies to space exploration.</p>
-</section>
-
-<!-- MODULE TABS -->
-<div class="module-tabs" id="module-tabs">
-    <button class="module-tab active" data-panel="theoretical">
-        <span class="tab-dot"></span> 🌌 Theoretical
-    </button>
-    <button class="module-tab" data-panel="computational">
-        <span class="tab-dot"></span> 💻 Computational
-    </button>
-    <button class="module-tab" data-panel="observational">
-        <span class="tab-dot"></span> 🔭 Observational
-    </button>
-    <button class="module-tab" data-panel="leaderboard">
-        <span class="tab-dot"></span> 🏆 Leaderboard
-    </button>
-</div>
-
-<!-- PANELS -->
-<div class="modules-panels">
-
-    <!-- ════════════════════ THEORETICAL ════════════════════ -->
-    <div class="module-panel active" id="panel-theoretical">
-        <div class="panel-header">
-            <span class="panel-icon">🌌</span>
-            <div>
-                <div class="panel-title">Theoretical Astronomy</div>
-                <div class="panel-subtitle">Module 1 · Astronomy Basics</div>
-            </div>
-        </div>
-
-        <!-- Week 1 -->
-        <div class="week-block">
-            <div class="week-header open" onclick="toggleWeek(this)">
-                <div class="week-header-left">
-                    <span class="week-badge">Week 1</span>
-                    <span class="week-header-title">Origins of the Universe &amp; Stellar Life</span>
-                </div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body open">
-
-                <div class="day-block">
-                    <div class="day-label">
-                        <span class="day-number">Day 1</span>
-                        <span class="day-title">Big Bang Theory</span>
-                    </div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=wNDGgL73ihY" target="_blank">
-                            <span class="link-icon">▶</span> The Beginning of Everything
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=xtrYF_hxxUM" target="_blank">
-                            <span class="link-icon">▶</span> Evidence of The Big Bang
-                        </a>
-                        <a class="resource-link web" href="https://www.physicsoftheuniverse.com/topics_bigbang_timeline.html" target="_blank">
-                            <span class="link-icon">🌐</span> The First Few Minutes
-                        </a>
-                        <a class="resource-link web" href="https://science.nasa.gov/universe/overview/" target="_blank">
-                            <span class="link-icon">🌐</span> Timeline So Far — NASA
-                        </a>
-                        <div class="book-note">
-                            📖 Went curious? We recommend reading <strong>The First Three Minutes</strong> by Nobel Laureate Steven Weinberg —
-                            <a href="https://svetlogike.wordpress.com/wp-content/uploads/2014/02/15-steven-weinberg-the-first-three-minutes-a-moderm-view-of-the-origin-of-the-universe-1977.pdf" target="_blank">read it here</a>.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="day-block">
-                    <div class="day-label">
-                        <span class="day-number">Day 2</span>
-                        <span class="day-title">After-Party of The Big Bang</span>
-                    </div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TBikbn5XJhg" target="_blank">
-                            <span class="link-icon">▶</span> Timelapse of The Universe
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=3tCMd1ytvWg" target="_blank">
-                            <span class="link-icon">▶</span> Cosmic Microwave Background
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=lInXZ6I3u_I" target="_blank">
-                            <span class="link-icon">▶</span> Nucleosynthesis
-                        </a>
-                        <div class="book-note">
-                            📖 Want to go deeper?<br>
-                            • <strong>A Brief History of Time</strong> by Stephen Hawking — <a href="https://www.fisica.net/relatividade/stephen_hawking_a_brief_history_of_time.pdf" target="_blank">read it here</a>.<br>
-                            • <strong>David Tong's Lectures on Cosmology</strong> — <a href="https://davidtong.org/pdfs/teaching/cosmology/cosmo.pdf" target="_blank">read it here</a>.
-                        </div>
-                    </div>
-                </div>
-
-                <div class="day-block">
-                    <div class="day-label">
-                        <span class="day-number">Day 3</span>
-                        <span class="day-title">Galactic Genesis</span>
-                    </div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=n4vvuzIWOTE" target="_blank">
-                            <span class="link-icon">▶</span> Formation of Stars, Galaxies &amp; Clusters
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=rENyyRwxpHo" target="_blank">
-                            <span class="link-icon">▶</span> Our Home Supercluster
-                        </a>
-                        <a class="resource-link web" href="https://science.nasa.gov/universe/galaxies/evolution/" target="_blank">
-                            <span class="link-icon">🌐</span> Mechanisms of Galaxy Formation — NASA
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Pgz93gSoXlw" target="_blank">
-                            <span class="link-icon">▶</span> Cosmic Web
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Y4RtcJ_tWy4" target="_blank">
-                            <span class="link-icon">▶</span> Cosmic Voids
-                        </a>
-                        <a class="resource-link web" href="https://structures.uni-heidelberg.de/blog/posts/2022_12_cw/" target="_blank">
-                            <span class="link-icon">🌐</span> Mapping The Cosmic Web
-                        </a>
-                        <div class="book-note">
-                            ▶ Want to learn more?<br>
-                            • <strong>Full tutorial on </strong>Stellar Evolution — <a href="https://www.youtube.com/watch?v=77IxbBjcDps" target="_blank">watch it here</a>.<br>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="day-block">
-                    <div class="day-label">
-                        <span class="day-number">Day 4</span>
-                        <span class="day-title">Dark Matter &amp; Dark Energy</span>
-                    </div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=8-t-1EkOhAE" target="_blank">
-                            <span class="link-icon">▶</span> Why Dark Matter &amp; Energy?
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=QAa2O_8wBUQ" target="_blank">
-                            <span class="link-icon">▶</span> What is Dark Matter &amp; Dark Energy?
-                        </a>
-                        <a class="resource-link web" href="https://www.space.com/20930-dark-matter.html" target="_blank">
-                            <span class="link-icon">🌐</span> Shining Light on Dark Matter &amp; Energy
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=thxknsmN9yk" target="_blank">
-                            <span class="link-icon">▶</span> Some More Dark Matter &amp; Dark Energy
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=zZYHPSONxqI" target="_blank">
-                            <span class="link-icon">▶</span> M.O.N.D (Modified Newtonian Dynamics)
-                        </a>
-                        <div class="book-note">
-                            ▶ Bonus Lecture on Dark Matter?<br>
-                            • <strong>What is Dark Matter and Why Does it Matter?</strong> by Physicist Dan Bauer — <a href="https://www.youtube.com/watch?v=o79szJBtQ5E" target="_blank">watch it here</a>.<br>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="day-block">
-                    <div class="day-label">
-                        <span class="day-number">Day 5</span>
-                        <span class="day-title">Stellar Evolution &amp; Black Holes</span>
-                    </div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=a-rUtp7Alh8" target="_blank">
-                            <span class="link-icon">▶</span> Protostar Development
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TcRJYC5mvPI" target="_blank">
-                            <span class="link-icon">▶</span> T Tauri Phase
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Q7MG-LahuX4" target="_blank">
-                            <span class="link-icon">▶</span> A Star is Born
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4xIQGbYur9Q" target="_blank">
-                            <span class="link-icon">▶</span> Life Cycle of a Star
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=xYxyTZG7APQ" target="_blank">
-                            <span class="link-icon">▶</span> Supernovae Explosions
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=fFeV8WxIZLk" target="_blank">
-                            <span class="link-icon">▶</span> Neutron Stars
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=e-P5IFTqB98" target="_blank">
-                            <span class="link-icon">▶</span> Black Holes
-                        </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=kCrmN8C5uH0" target="_blank">
-                            <span class="link-icon">▶</span> Short Film — The Journey
-                        </a>
-                        <div class="book-note">
-                            📖 Found this Interesting?<br>
-                            • <strong>Watch Blackholes and Other Cosmic Quandaries</strong> by Neil DeGrasse Tyson — <a href="https://www.youtube.com/watch?v=rYzBxo3hbYQ" target="_blank">watch it here</a>.<br>
-                            • <strong>Read Stars: A Very Short Introduction by Andrew King</strong>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Week 2 Theoretical -->
+#!/usr/bin/env python3
+"""
+patch_week4.py  –  Run this in the same folder as your HTML file.
+Usage:  python3 patch_week4.py astronomy.html
+"""
+import sys, re
+
+THEORETICAL_W4 = """
+        <!-- Week 4 Theoretical -->
         <div class="week-block">
             <div class="week-header" onclick="toggleWeek(this)">
                 <div class="week-header-left">
-                    <span class="week-badge">Week 2</span>
-                    <span class="week-header-title">Antimatter, Gravitational Waves &amp; The Solar System</span>
+                    <span class="week-badge">Week 4</span>
+                    <span class="week-header-title">Astrobiology, End of the Universe &amp; Current Frontiers</span>
                 </div>
                 <span class="week-chevron">▼</span>
             </div>
             <div class="week-body">
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Antimatter &amp; Baryogenesis</span></div>
+                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Astrobiology</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=JOMrbkZqTcs" target="_blank"><span class="link-icon">▶</span> Does Antimatter Explain Why There's Something Rather Than Nothing?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=ij_G6RmVEMo" target="_blank"><span class="link-icon">▶</span> Where Did the Antimatter Go?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=jjp3WC8Unj8" target="_blank"><span class="link-icon">▶</span> What Happens if You Drop Antimatter?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=xjuYddWHoWk" target="_blank"><span class="link-icon">▶</span> The Baryogenesis Anomaly</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=negiPvWHaMc" target="_blank"><span class="link-icon">▶</span> How a One-in-a-Billion Mistake Made the Universe Possible</a>
+                        <a class="resource-link yt" href="https://youtu.be/VVqp0RjjRzg?si=3dtbU9FOg0IXlFQM" target="_blank"><span class="link-icon">▶</span> What is Astrobiology Explained <span style="opacity:0.5;font-size:0.8em">~12 min</span></a>
+                        <a class="resource-link yt" href="https://youtu.be/MP7o_AmtJOw?si=84j2DEqozYtUX_xE" target="_blank"><span class="link-icon">▶</span> Introduction to Astrobiology <span style="opacity:0.5;font-size:0.8em">~35 min</span></a>
+                        <div class="book-note">▶ Want to know more?<br>• <strong>Astrobiology Course by European Space Agency</strong> — <a href="https://youtube.com/playlist?list=PLbyvawxScNbtA9s5konCrvXPtyYzIA5zy&si=SG9_elkhslyfDE6M" target="_blank">watch playlist here</a>.</div>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Gravitational Waves &amp; LIGO</span></div>
+                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">End of the Universe</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=kr3iXUcNt2g" target="_blank"><span class="link-icon">▶</span> The Craziest Experiment Humans Have Ever Built (LIGO)</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=iphcyNWFD10" target="_blank"><span class="link-icon">▶</span> The Absurdity of Detecting Gravitational Waves</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=wrqbfT8qcBc" target="_blank"><span class="link-icon">▶</span> LIGO's First Detection of Gravitational Waves!</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=oZPtZhMdBJo" target="_blank"><span class="link-icon">▶</span> Was the Gravitational Wave Background Finally Discovered?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=L7Dobd4ml8o" target="_blank"><span class="link-icon">▶</span> How Pulsar Timing Arrays Detect Gravitational Waves</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4_aOIA-vyBo" target="_blank"><span class="link-icon">▶</span> Three Ways to Destroy the Universe (Kurzgesagt) <span style="opacity:0.5;font-size:0.8em">~6 min</span></a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=gEyXTQ9do-c" target="_blank"><span class="link-icon">▶</span> Could the Universe End by Tearing Apart Every Atom? (PBS Space Time) <span style="opacity:0.5;font-size:0.8em">~15 min</span></a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=PC2JOQ7z5L0" target="_blank"><span class="link-icon">▶</span> What Happens After the Universe Ends? (PBS Space Time) <span style="opacity:0.5;font-size:0.8em">~18 min</span></a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Spectroscopy, Light &amp; Gravitational Lensing</span></div>
+                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Current Frontiers in Astronomy &amp; Cosmology — Part 1</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=_1mpHBAXh1c" target="_blank"><span class="link-icon">▶</span> Spectroscopy Explained</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=jjy-eqWM38g" target="_blank"><span class="link-icon">▶</span> Light: Crash Course Astronomy</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TRAbZxQHlVw" target="_blank"><span class="link-icon">▶</span> The Gravity of the Situation</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=AwhKZ3fd9JA" target="_blank"><span class="link-icon">▶</span> General Relativity &amp; Curved Spacetime Explained!</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Dgv2WWpm7_s" target="_blank"><span class="link-icon">▶</span> The Strange Universe of Gravitational Lensing</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=6etTERFUlUI" target="_blank"><span class="link-icon">▶</span> The Absurd Search For Dark Matter (Veritasium) <span style="opacity:0.5;font-size:0.8em">~16 min</span></a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=CQ-4-MWa7Xw" target="_blank"><span class="link-icon">▶</span> Cosmology in Crisis? Confronting the Hubble Tension (World Science Festival) <span style="opacity:0.5;font-size:0.8em">~36 min</span></a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">The Solar System</span></div>
+                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Current Frontiers in Astronomy &amp; Cosmology — Part 2</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=sCkhEu3lYNc" target="_blank"><span class="link-icon">▶</span> The Formation of the Solar System</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=b22HKFMIfWo" target="_blank"><span class="link-icon">▶</span> The Sun: Our Closest Star</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=KsF_hdjWJjo" target="_blank"><span class="link-icon">▶</span> The Solar System — Our Home in Space</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=jaa4-pArUwM" target="_blank"><span class="link-icon">▶</span> How Does the Sun Work?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=8qQW4LTWgtc" target="_blank"><span class="link-icon">▶</span> Why Earth Sucks Compared to the Planet Venus/Hestia</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Y6slPVbwLhI" target="_blank"><span class="link-icon">▶</span> We Found the Most Powerful Object In the Universe (Astrum) <span style="opacity:0.5;font-size:0.8em">~26 min</span></a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=9ZbO6ISW0oo" target="_blank"><span class="link-icon">▶</span> The Lithium Problem — Alas Lewis &amp; Barnes (A Fortunate Universe) <span style="opacity:0.5;font-size:0.8em">~17 min</span></a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Exoplanets &amp; The Fermi Paradox</span></div>
+                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Current Frontiers in Astronomy &amp; Cosmology — Part 3</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=0ZOhJe_7GrE" target="_blank"><span class="link-icon">▶</span> What Is an Exoplanet?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=fjd8I_cXUBE" target="_blank"><span class="link-icon">▶</span> How Do We Find Exoplanets?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=dM_Pelfc92s" target="_blank"><span class="link-icon">▶</span> The Drake Equation (Part 1)</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=sNhhvQGsMEc" target="_blank"><span class="link-icon">▶</span> The Fermi Paradox — Where Are All The Aliens?</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=UjtOGPJ0URM" target="_blank"><span class="link-icon">▶</span> The Great Filter: Why Alien Life Would Be Our Doom</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=nCe3Kqp33mE" target="_blank"><span class="link-icon">▶</span> The Anomaly at the Edge of the Universe (Astrum) <span style="opacity:0.5;font-size:0.8em">~42 min</span></a>
+                        <a class="resource-link yt" href="https://youtu.be/oeCSxsvbYrM?si=GwR0jjg4bh3oxLID" target="_blank"><span class="link-icon">▶</span> Shortcomings of the Standard Model &amp; Scope Beyond <span style="opacity:0.5;font-size:0.8em">~17 min</span></a>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>"""
 
-        <!-- Week 3 Theoretical -->
+COMPUTATIONAL_W4 = """
+        <!-- Week 4 Computational -->
         <div class="week-block">
             <div class="week-header" onclick="toggleWeek(this)">
                 <div class="week-header-left">
-                    <span class="week-badge">Week 3</span>
-                    <span class="week-header-title">Cosmology, Black Holes &amp; General Relativity</span>
+                    <span class="week-badge">Week 4</span>
+                    <span class="week-header-title">Decision Tree · Random Forest · Boosting · Neural Networks &amp; LLMs</span>
                 </div>
                 <span class="week-chevron">▼</span>
             </div>
             <div class="week-body">
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Cosmology Basics</span></div>
+                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Decision Trees</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/playlist?list=PLaLvSxPpI1c1_04JbqOLKFS1-9v_zdRap" target="_blank"><span class="link-icon">▶</span> Cosmology 101: Exploring the Universe </a>
-                        <a class="resource-link web" href="https://science.nasa.gov/universe/galaxies/types/" target="_blank"><span class="link-icon">🌐</span> Types of Galaxies — NASA</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF" target="_blank"><span class="link-icon">▶</span> Decision Trees — StatQuest Playlist (Videos 46–49)</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Black Holes — Part 1</span></div>
+                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Random Forest &amp; AdaBoost</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=9XkHBmE-N34" target="_blank"><span class="link-icon">▶</span> The Black Hole Information Paradox </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=1LYSfpKog4w" target="_blank"><span class="link-icon">▶</span> Black Hole Apocalypse: What's Inside a Black Hole? (upto 50:47)</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF" target="_blank"><span class="link-icon">▶</span> Random Forest &amp; AdaBoost — StatQuest Playlist (Videos 52–53, 58)</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Black Holes — Part 2</span></div>
+                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Gradient Boosting</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=1LYSfpKog4w" target="_blank"><span class="link-icon">▶</span> Black Hole Apocalypse: What's Inside a Black Hole? (continued)</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF" target="_blank"><span class="link-icon">▶</span> Gradient Boosting — StatQuest Playlist (Videos 59–61)</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">AGNs &amp; Quasars</span></div>
+                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">XGBoost &amp; CatBoost</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=X7kzOm7dbPE" target="_blank"><span class="link-icon">▶</span> Active Galactic Nuclei and Quasars! </a>
+                        <a class="resource-link yt" href="https://www.youtube.com/playlist?list=PLblh5JKOoLUICTaGLRoHQDuF_7q2GfuJF" target="_blank"><span class="link-icon">▶</span> XGBoost &amp; CatBoost — StatQuest Playlist (Videos 64–65, 69–70)</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">General Relativity Basics</span></div>
+                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Neural Networks &amp; LLMs</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=XRr1kaXKBsU" target="_blank"><span class="link-icon">▶</span> What Everyone Gets Wrong About Gravity </a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=6akmv1bsz1M" target="_blank"><span class="link-icon">▶</span> Something Strange Happens When You Follow Einstein's Math</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=CqOfi41LfDw" target="_blank"><span class="link-icon">▶</span> But What is a Neural Network? (3Blue1Brown)</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=aircAruvnKk&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi" target="_blank"><span class="link-icon">▶</span> Gradient Descent: How Neural Networks Learn (3Blue1Brown)</a>
+                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=LPZh9BOjkQs&list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi&index=5" target="_blank"><span class="link-icon">▶</span> Transformers &amp; LLMs (3Blue1Brown)</a>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>"""
 
-        <div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Content not released yet</span><span class="wc-pill">Coming Soon</span></div>
-    </div>
-
-    <!-- ════════════════════ COMPUTATIONAL ════════════════════ -->
-    <div class="module-panel" id="panel-computational">
-        <div class="panel-header">
-            <span class="panel-icon">💻</span>
-            <div>
-                <div class="panel-title">Computational Astronomy</div>
-                <div class="panel-subtitle">Module 2 · Python · Data Science · ML</div>
-            </div>
-        </div>
-        <div class="week-block">
-            <div class="week-header open" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 1</span><span class="week-header-title">Python Foundations &amp; Data Visualization</span></div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body open">
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Jupyter Notebook Setup + Python Basics (Part I)</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=PxMN8xT9NbA" target="_blank"><span class="link-icon">▶</span> Jupyter Notebook Setup</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=u9MIwoFWXVg" target="_blank"><span class="link-icon">▶</span> How to Use Kaggle For Data Science</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=K5KVEU3aaeQ" target="_blank"><span class="link-icon">▶</span> Python Tutorial - Watch till 1:06:33</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Python Basics (Part II)</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=K5KVEU3aaeQ" target="_blank"><span class="link-icon">▶</span> Python Tutorial - Complete Video</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=gOMW_n2-2Mw" target="_blank"><span class="link-icon">▶</span> Lists, Sets and Tuples</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=MZZSMaEAC2g" target="_blank"><span class="link-icon">▶</span> Dictionaries</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Data Manipulation (Part I) — NumPy</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=QUT1VHiLmmI" target="_blank"><span class="link-icon">▶</span> NumPy Tutorial</a>
-                        <a class="resource-link web" href="https://www.kaggle.com/code/orhansertkaya/numpy-tutorial-for-beginners" target="_blank"><span class="link-icon">📘</span> NumPy Notebook</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Data Manipulation (Part II) — Pandas</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=2uvysYbKdjM" target="_blank"><span class="link-icon">▶</span> Pandas Tutorial</a>
-                        <a class="resource-link web" href="https://www.kaggle.com/code/ybifoundation/pandas-basic-functions" target="_blank"><span class="link-icon">📘</span> Pandas Notebook</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Data Visualization — Matplotlib &amp; Seaborn</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=UO98lJQ3QGI" target="_blank"><span class="link-icon">▶</span> Matplotlib Tutorial - Part 1</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=nKxLfUrkLE8" target="_blank"><span class="link-icon">▶</span> Seaborn Tutorial</a>
-                        <a class="resource-link web" href="https://www.kaggle.com/code/prashant111/matplotlib-tutorial-for-beginners" target="_blank"><span class="link-icon">📘</span> Matplotlib Notebook</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=ooqXQ37XHMM" target="_blank"><span class="link-icon">▶</span> Seaborn Crash Course</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+OBSERVATIONAL_W4 = """
+        <!-- Week 4 Observational -->
         <div class="week-block">
             <div class="week-header" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 2</span><span class="week-header-title">Machine Learning · Regression · Regularization</span></div>
+                <div class="week-header-left">
+                    <span class="week-badge">Week 4</span>
+                    <span class="week-header-title">Calibration Frames · Image Stacking · Radio Astronomy · Solar Observation</span>
+                </div>
                 <span class="week-chevron">▼</span>
             </div>
             <div class="week-body">
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Introduction to Machine Learning &amp; Linear Regression</span></div>
+                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Calibration Frames</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> ML Specialization Playlist — L1–3: What is ML?</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L4–8: Supervised &amp; Unsupervised Learning</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L9–14: Linear Regression</a>
+                        <a class="resource-link web" href="https://practicalastrophotography.com/a-brief-guide-to-calibration-frames/" target="_blank"><span class="link-icon">🌐</span> A Brief Guide to Calibration Frames</a>
+                        <a class="resource-link yt" href="https://youtu.be/u6Zk_LQDOD8?si=6disg53RjZ9yoTth" target="_blank"><span class="link-icon">▶</span> Light, Dark, Flat and Bias Frames Explained</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Gradient Descent &amp; Advanced Regression</span></div>
+                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">Image Stacking &amp; Processing</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L15–20: Gradient Descent</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L21–24: Multivariate Linear Regression</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L25–30: Going Deeper in Linear Regression</a>
+                        <a class="resource-link yt" href="https://youtu.be/4DbUkgjf6gs?si=JWnKEkt96MKHKyRm" target="_blank"><span class="link-icon">▶</span> Image Stacking on DeepSkyStacker</a>
+                        <a class="resource-link yt" href="https://youtu.be/0Ft8_TO-Gw4?si=Bdfv_yka5BcYReT0" target="_blank"><span class="link-icon">▶</span> Siril + GIMP for Processing Images</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Scikit-learn &amp; Logistic Regression</span></div>
+                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Radio Astronomy</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=rvVkVsG49uU" target="_blank"><span class="link-icon">▶</span> Intro to Scikit-Learn</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=8jazNUpO3lQ" target="_blank"><span class="link-icon">▶</span> Linear Regression using Sklearn</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L31–36: Basics of Logistic Regression</a>
-                        <a class="resource-link web" href="https://www.kaggle.com/code/arush207/basic-implementation-of-logistic-regression" target="_blank"><span class="link-icon">📘</span> Logistic Regression from Scratch — Kaggle Notebook</a>
+                        <a class="resource-link yt" href="https://youtu.be/nFEgRt2EH1g?si=bMVRjsS5rkjp6RCQ" target="_blank"><span class="link-icon">▶</span> What is Radio Astronomy?</a>
+                        <a class="resource-link yt" href="https://youtu.be/_2EBCzyrqTA?si=rrzVu8ZQT095DN6D" target="_blank"><span class="link-icon">▶</span> Using Radio Telescopes</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Regularization &amp; Overfitting</span></div>
+                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Messier Marathon</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=EuBBz3bI-aA" target="_blank"><span class="link-icon">▶</span> Bias and Variance</a>
-                        <a class="resource-link yt" href="https://youtube.com/playlist?list=PLkDaE6sCZn6FNC6YRfRQc_FbeQrF8BwGI" target="_blank"><span class="link-icon">▶</span> L37–41: Overfitting</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Q81RR3yKn30" target="_blank"><span class="link-icon">▶</span> L2 Regularization</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=NGf0voTMlcs" target="_blank"><span class="link-icon">▶</span> L1 Regularization</a>
+                        <a class="resource-link yt" href="https://youtu.be/XynmpdCWi1o?si=mAG6JI5xkILGej1Z" target="_blank"><span class="link-icon">▶</span> What is the Messier Marathon?</a>
+                        <a class="resource-link yt" href="https://youtu.be/_e3stRiqfbg?si=fLIDAh0Mjf5JMGlL" target="_blank"><span class="link-icon">▶</span> Why the Messier Catalogue?</a>
+                        <a class="resource-link yt" href="https://youtu.be/eEP2Q7ZCqs4?si=FIy5UjricH_CVBYe" target="_blank"><span class="link-icon">▶</span> How to Capture ALL Messier Objects in a Single Night</a>
                     </div>
                 </div>
                 <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Model Evaluation &amp; Astropy</span></div>
+                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Solar Observation</span></div>
                     <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=fwY9Qv96DJY" target="_blank"><span class="link-icon">▶</span> Train-Test Split</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=fSytzGwwBVw" target="_blank"><span class="link-icon">▶</span> Cross Validation</a>
-                        <a class="resource-link yt" href="https://youtu.be/onfn4_r3BVY" target="_blank"><span class="link-icon">▶</span> Astropy Library in Python</a>
+                        <a class="resource-link yt" href="https://youtu.be/jJZ2xZa4csU?si=E7h844ksjGWskOmK" target="_blank"><span class="link-icon">▶</span> Beginner's Guide to Solar Viewing Through a Telescope</a>
+                        <a class="resource-link yt" href="https://youtu.be/0r50yOulJqM?si=cVuO9pFqT4hUAkT4" target="_blank"><span class="link-icon">▶</span> Things to Remember While Solar Observing Through a Telescope</a>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="week-block">
-            <div class="week-header" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 3</span><span class="week-header-title">Evaluation Metrics · KNN · Naive Bayes · SVM</span></div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body">
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Evaluation Metrics</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link web" href="https://medium.com/analytics-vidhya/complete-guide-to-machine-learning-evaluation-metrics-615c2864d916" target="_blank"><span class="link-icon">🌐</span> Complete Guide to Evaluation Metrics</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4jRBRDbJemM" target="_blank"><span class="link-icon">▶</span> ROC Curve &amp; AUC</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Kdsp6soqA7o" target="_blank"><span class="link-icon">▶</span> Confusion Matrix</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=85dtiMz9tSo" target="_blank"><span class="link-icon">▶</span> Implementation of Evaluation Metrics - Tutorial</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title"> K-Nearest Neighbors (KNN)</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link web" href="https://www.kaggle.com/discussions/general/426426" target="_blank"><span class="link-icon">📘</span> Self-Implementation Practice — Evaluation Metrics</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=HVXime0nQeI" target="_blank"><span class="link-icon">▶</span> K-Nearest Neighbors (KNN)</a>
-                        <a class="resource-link web" href="https://medium.com/swlh/k-nearest-neighbor-ca2593d7a3c4" target="_blank"><span class="link-icon">🌐</span> K-Nearest Neighbor — Article</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=CQveSaMyEwM" target="_blank"><span class="link-icon">▶</span> Implementation of KNN</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Naive Bayes &amp; SVM (Part 1)</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=O2L2Uv9pdDA" target="_blank"><span class="link-icon">▶</span> Naive Bayes Algorithm</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=H3EjCKtlVog" target="_blank"><span class="link-icon">▶</span> Gaussian Naive Bayes</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=nHIUYwN-5rM" target="_blank"><span class="link-icon">▶</span> Implementation of Naive Bayes</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=efR1C6CvhmE" target="_blank"><span class="link-icon">▶</span> Support Vector Machines — Part 1</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Toet3EiSFcM" target="_blank"><span class="link-icon">▶</span> Support Vector Machines — Part 2</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">SVM (Part 2)</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=Qc5IyLW_hns" target="_blank"><span class="link-icon">▶</span> Support Vector Machines — Part 3</a>
-                        <a class="resource-link web" href="https://www.analyticsvidhya.com/blog/2021/06/support-vector-machine-better-understanding/" target="_blank"><span class="link-icon">🌐</span> A Better Understanding of Support Vector Machines</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=FB5EdxAGxQg" target="_blank"><span class="link-icon">▶</span> Implementation of SVM</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Finding Exoplanets with Python &amp; Lightkurve</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://youtu.be/J2yD9JrqllA?si=YSgx6YzXn2G_iImt" target="_blank"><span class="link-icon">▶</span> How To Find Exoplanets Using Python and Lightkurve</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Decision Tree · Random Forest · LLMs</span><span class="wc-pill">Coming Soon</span></div>
-    </div>
+        </div>"""
 
-    <!-- ════════════════════ OBSERVATIONAL ════════════════════ -->
-    <div class="module-panel" id="panel-observational">
-        <div class="panel-header">
-            <span class="panel-icon">🔭</span>
-            <div>
-                <div class="panel-title">Observational Astronomy</div>
-                <div class="panel-subtitle">Module 3 · Stargazing · Telescopes · Astrophotography</div>
-            </div>
-        </div>
-        <div class="week-block">
-            <div class="week-header open" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 1</span><span class="week-header-title">Night Sky Basics &amp; Tools</span></div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body open">
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Basics of Stargazing</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=XUbG8jboh4M" target="_blank"><span class="link-icon">▶</span> Getting Oriented to the Night Sky — Part 1 of 2</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=9P8Veb_AlJ0" target="_blank"><span class="link-icon">▶</span> Getting Oriented to the Night Sky — Part 2 of 2</a>
-                        <a class="resource-link yt" href="https://youtu.be/L-Wtlev6suc" target="_blank"><span class="link-icon">▶</span> Stargazing Basics</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">How to See Planets</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=rMQ5Yc6pJak" target="_blank"><span class="link-icon">▶</span> Spotting Planets in the Night Sky</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">All Constellations</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://youtu.be/3P2GVocbw9o" target="_blank"><span class="link-icon">▶</span> Complete Guide to Constellations</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Using Stellarium App &amp; Solar Positions</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://youtu.be/GnVqnGka9_Q" target="_blank"><span class="link-icon">▶</span> How to Use Stellarium</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=4LrT1SCKdcc" target="_blank"><span class="link-icon">▶</span> Solar Positions Over a Year</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Hanle Observatory</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=sSX7crssAUk" target="_blank"><span class="link-icon">▶</span> Inside the Hanle Observatory — India's High-Altitude Telescope</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="week-block">
-            <div class="week-header" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 2</span><span class="week-header-title">Telescope Basics &amp; Handling</span></div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body">
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Basics &amp; Types of Telescopes</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=mYhy7eaazIk" target="_blank"><span class="link-icon">▶</span> Basics of Telescopes</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=suEyWeRY0uw" target="_blank"><span class="link-icon">▶</span> Types of Telescopes</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">How to Use Any Telescope</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=eQ3IP60Fj9c" target="_blank"><span class="link-icon">▶</span> How to Use Any Telescope</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Setting Up the Schmidt-Cassegrain Telescope</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=7vOnyufh-AY" target="_blank"><span class="link-icon">▶</span> How to Setup a Schmidt-Cassegrain Telescope</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Telescope Accessories</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=uV14wJoHvhI" target="_blank"><span class="link-icon">▶</span> Telescope Accessories (Part 1)</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=TXdaXioEdgc" target="_blank"><span class="link-icon">▶</span> Telescope Accessories (Part 2)</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">Space Telescopes</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=csIry_3pbDU" target="_blank"><span class="link-icon">▶</span> Space Telescopes</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="week-block">
-            <div class="week-header" onclick="toggleWeek(this)">
-                <div class="week-header-left"><span class="week-badge">Week 3</span><span class="week-header-title">Camera Handling &amp; Astrophotography</span></div>
-                <span class="week-chevron">▼</span>
-            </div>
-            <div class="week-body">
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 1</span><span class="day-title">Photography &amp; Astrophotography Basics</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=V7z7BAZdt2M" target="_blank"><span class="link-icon">▶</span> Photography Basics</a>
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=r-POAeIgU3E" target="_blank"><span class="link-icon">▶</span> Astrophotography Basics</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 2</span><span class="day-title">How to Use a Camera</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=HTUjJoMNWqo" target="_blank"><span class="link-icon">▶</span> How to Use a Camera</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 3</span><span class="day-title">Astrophotography Tutorial</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=sRuLSFmBIFs" target="_blank"><span class="link-icon">▶</span> Astrophotography Tutorial</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 4</span><span class="day-title">Connecting a Camera to a Telescope</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=iZhYHOc85ew" target="_blank"><span class="link-icon">▶</span> Connecting Camera to a Telescope</a>
-                    </div>
-                </div>
-                <div class="day-block">
-                    <div class="day-label"><span class="day-number">Day 5</span><span class="day-title">A Night of Astrophotography</span></div>
-                    <div class="resource-list">
-                        <a class="resource-link yt" href="https://www.youtube.com/watch?v=jl6Ov-jEXcM" target="_blank"><span class="link-icon">▶</span> Take You for a Night of Astrophotography</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Image Stacking</span><span class="wc-pill">Coming Soon</span></div>
-    </div>
+fname = sys.argv[1] if len(sys.argv) > 1 else "astronomy.html"
 
-    <!-- ════════════════════ LEADERBOARD ════════════════════ -->
-    <div class="module-panel" id="panel-leaderboard">
-        <div class="panel-header">
-            <span class="panel-icon">🏆</span>
-            <div>
-                <div class="panel-title">Leaderboard</div>
-                <div class="panel-subtitle">Astronomy 101 · Quiz Scores · All Weeks</div>
-            </div>
-        </div>
+with open(fname, encoding="utf-8") as f:
+    html = f.read()
 
-        <div class="lb-wrapper">
+# Each "Coming Soon" block is a single <div class="week-coming">...</div> line
+# Pattern: match the specific week-coming div for each module
+# Theoretical coming-soon  (Week 4, "Content not released yet")
+html = html.replace(
+    '<div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Content not released yet</span><span class="wc-pill">Coming Soon</span></div>',
+    THEORETICAL_W4,
+    1   # replace first occurrence = Theoretical panel
+)
 
-            <!-- Legend -->
-            <div class="lb-legend">
-                <div class="lb-legend-item"><div class="lb-legend-dot gold"></div> Week 1 /48</div>
-                <div class="lb-legend-item"><div class="lb-legend-dot blue"></div> Week 2 /46</div>
-                <div class="lb-legend-item"><div class="lb-legend-dot white"></div> Total /94</div>
-            </div>
+# Computational coming-soon (Week 4, "Decision Tree · Random Forest · LLMs")
+html = html.replace(
+    '<div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Decision Tree · Random Forest · LLMs</span><span class="wc-pill">Coming Soon</span></div>',
+    COMPUTATIONAL_W4,
+    1
+)
 
-            <!-- Search -->
-            <div class="lb-search-row">
-                <input class="lb-search" id="lb-search" type="text" placeholder="Search by name or code...">
-            </div>
+# Observational coming-soon (Week 4, "Image Stacking")
+html = html.replace(
+    '<div class="week-coming"><span class="wc-badge">Week 4</span><span class="wc-text">Image Stacking</span><span class="wc-pill">Coming Soon</span></div>',
+    OBSERVATIONAL_W4,
+    1
+)
 
-            <!-- Table -->
-            <div class="lb-table-wrap">
-                <table class="lb-table" id="lb-table">
-                    <thead>
-                        <tr>
-                            <th class="center">#</th>
-                            <th>Name</th>
-                            <th class="hide-mobile">Code</th>
-                            <th class="center">Week 1 <span style="opacity:0.5;font-size:0.65rem">/48</span></th>
-                            <th class="center hide-mobile">Week 2 <span style="opacity:0.5;font-size:0.65rem">/46</span></th>
-                            <th class="center">Total <span style="opacity:0.5;font-size:0.65rem">/94</span></th>
-                        </tr>
-                    </thead>
-                    <tbody id="lb-tbody"></tbody>
-                </table>
-            </div>
+out = fname.replace(".html", "_week4.html")
+with open(out, "w", encoding="utf-8") as f:
+    f.write(html)
 
-            <div class="lb-updated" id="lb-updated"></div>
-        </div>
-    </div>
-
-</div><!-- /modules-panels -->
-
-<!-- MARQUEE -->
-<div class="ml-terms">
-    <div class="ml-terms-inner">
-        Observation &nbsp;•&nbsp; Stellar Evolution &nbsp;•&nbsp; Cosmology &nbsp;•&nbsp; Gravitational Waves &nbsp;•&nbsp; Redshift &nbsp;•&nbsp; Planetary Science &nbsp;•&nbsp; Spectroscopy &nbsp;•&nbsp; Astrophysics &nbsp;•&nbsp; Radio Astronomy &nbsp;•&nbsp; Dark Matter &nbsp;•&nbsp; Nucleosynthesis &nbsp;•&nbsp; Exoplanets &nbsp;•&nbsp; Big Bang &nbsp;•&nbsp; CMB &nbsp;•&nbsp; Black Holes &nbsp;•&nbsp;
-        Observation &nbsp;•&nbsp; Stellar Evolution &nbsp;•&nbsp; Cosmology &nbsp;•&nbsp; Gravitational Waves &nbsp;•&nbsp; Redshift &nbsp;•&nbsp; Planetary Science &nbsp;•&nbsp; Spectroscopy &nbsp;•&nbsp; Astrophysics &nbsp;•&nbsp; Radio Astronomy &nbsp;•&nbsp; Dark Matter &nbsp;•&nbsp; Nucleosynthesis &nbsp;•&nbsp; Exoplanets &nbsp;•&nbsp; Big Bang &nbsp;•&nbsp; CMB &nbsp;•&nbsp; Black Holes &nbsp;•&nbsp;
-    </div>
-</div>
-
-<!-- QUIZ SECTION -->
-<section class="quiz-section">
-    <h2>Week 2 Quiz</h2>
-    <p class="quiz-subtitle">Astronomy 101 · All Three Modules</p>
-    <div class="quiz-box">
-        <div class="quiz-box-header">
-            <span class="quiz-box-icon">📝</span>
-            <span class="quiz-box-title">Welcome to the Week 3 Quiz!</span>
-            <span class="quiz-box-tag">Week 3</span>
-        </div>
-        <p class="quiz-intro-text">
-            This quiz is divided into three sections. Please attempt all sections carefully.
-            Good luck, and enjoy exploring the universe!
-        </p>
-        <div class="quiz-sections">
-            <div class="quiz-section-item">
-                <span class="qsi-num">1</span>
-                <div class="qsi-body">
-                    <div class="qsi-title">Theory Module</div>
-                    <div class="qsi-desc">Questions covering the fundamental astronomy concepts discussed during Week 3.</div>
-                </div>
-            </div>
-            <div class="quiz-section-item">
-                <span class="qsi-num">2</span>
-                <div class="qsi-body">
-                    <div class="qsi-title">Observation Module</div>
-                    <div class="qsi-desc">Questions based on photography, using a camera and astrophotography for observational astronomy.</div>
-                </div>
-            </div>
-            <div class="quiz-section-item">
-                <span class="qsi-num">3</span>
-                <div class="qsi-body">
-                    <div class="qsi-title">Computational Module</div>
-                    <div class="qsi-desc">A hands-on galaxy classification challenge where you will build, train, and evaluate machine learning models to classify galaxies using astronomical data.</div>
-                </div>
-            </div>
-        </div>
-        <div class="quiz-note">
-            <strong>⚠️ Important:</strong> At the end of the assignment, submit the Google Drive link to your completed Google Colab notebook. Before submitting, please ensure that the notebook sharing settings are set to <strong>"Anyone with the link can view"</strong> before submitting, so that it can be accessed for evaluation. Make sure your notebook contains all required code, outputs, visualizations, model evaluations, and conclusions as specified in the assignment.
-        </div>
-        <div class="quiz-cta-row">
-            <a href="https://forms.gle/pw5S5U5UoGmbT5Ho8" target="_blank" class="quiz-btn primary">📋 Attempt the Quiz</a>
-            <a href="https://drive.google.com/file/d/1AOE_YYe8vvpZwvBYarmw-PM3LmCAqMFk/view?usp=sharing" target="_blank" class="quiz-btn secondary">🔗 Open Assignment PDF</a>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="social-icons">
-        <a href="https://www.instagram.com/equinoxiitg/"><i class="fa fa-instagram"></i></a>
-        <a href="https://www.youtube.com/@equinox7889"><i class="fa fa-youtube-play"></i></a>
-    </div>
-</footer>
-
-<script>
-    // ── STAR FIELD ──
-    const starsContainer = document.getElementById('stars-container');
-    function populateStars() {
-        starsContainer.innerHTML = '';
-        const n = Math.floor((window.innerWidth * window.innerHeight) / 1000);
-        const frag = document.createDocumentFragment();
-        for (let i = 0; i < n; i++) {
-            const s = document.createElement('div');
-            s.classList.add('star');
-            const sz = (Math.random() * 2 + 1) + 'px';
-            s.style.cssText = `width:${sz};height:${sz};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()}s`;
-            frag.appendChild(s);
-        }
-        starsContainer.appendChild(frag);
-    }
-    populateStars();
-    window.addEventListener('resize', populateStars);
-
-    // ── HAMBURGER ──
-    const hamburger = document.getElementById('hamburger-menu');
-    const navMenu = document.getElementById('nav-menu');
-    hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-    document.querySelectorAll('nav ul li a').forEach(l => l.addEventListener('click', () => navMenu.classList.remove('active')));
-
-    // ── TABS ──
-    document.querySelectorAll('.module-tab').forEach(tab => {
-        tab.addEventListener('click', () => {
-            document.querySelectorAll('.module-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
-            tab.classList.add('active');
-            document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
-            document.getElementById('module-tabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        });
-    });
-
-    // ── WEEK ACCORDION ──
-    function toggleWeek(header) {
-        const isOpen = header.classList.contains('open');
-        header.classList.toggle('open', !isOpen);
-        header.nextElementSibling.classList.toggle('open', !isOpen);
-    }
-
-    // ════════════════════════════════════════════
-    // ── LEADERBOARD
-    // Excel columns expected:
-    //   Name = "name", Code = "code"
-    //   Week 1 score = column header containing "week 1" or "week1"  → out of 48
-    //   Week 2 score = column header containing "week 2" or "week2"  → out of 46
-    // ════════════════════════════════════════════
-    const MAX_W1 = 48;
-    const MAX_W2 = 46;
-    let LEADERBOARD_DATA = [];
-
-    function renderLeaderboard(filter = '') {
-        const tbody = document.getElementById('lb-tbody');
-        const q = filter.toLowerCase().trim();
-
-        // Sort by total (week1 + week2) descending
-        const sorted = [...LEADERBOARD_DATA].sort((a, b) => (b.week1 + b.week2) - (a.week1 + a.week2));
-        const filtered = sorted.filter(r =>
-            r.name.toLowerCase().includes(q) || r.code.toLowerCase().includes(q)
-        );
-
-        if (LEADERBOARD_DATA.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="lb-empty">Loading scores...</td></tr>`;
-            return;
-        }
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="lb-empty">No results found for "${filter}"</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = filtered.map(row => {
-            const rank = sorted.findIndex(r => r.code === row.code) + 1;
-            const rankClass = rank <= 3 ? `rank-${rank}` : '';
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
-
-            const pct1     = MAX_W1 > 0 ? (row.week1 / MAX_W1 * 100).toFixed(1) : 0;
-            const pct2     = MAX_W2 > 0 ? (row.week2 / MAX_W2 * 100).toFixed(1) : 0;
-            const total    = row.week1 + row.week2;
-            const pctTotal = (MAX_W1 + MAX_W2) > 0 ? (total / (MAX_W1 + MAX_W2) * 100).toFixed(1) : 0;
-
-            return `<tr class="${rankClass}">
-                <td class="lb-rank-cell"><span class="rank-medal">${medal}</span></td>
-                <td class="lb-name-cell">${row.name}</td>
-                <td class="lb-code-cell hide-mobile">${row.code}</td>
-                <td class="lb-score-cell w1-col">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill" style="width:${pct1}%"></div>
-                        </div>
-                        <span class="score-num">${row.week1}</span>
-                    </div>
-                </td>
-                <td class="lb-score-cell w2-col hide-mobile">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill blue" style="width:${pct2}%"></div>
-                        </div>
-                        <span class="score-num blue">${row.week2}</span>
-                    </div>
-                </td>
-                <td class="lb-score-cell">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill total" style="width:${pctTotal}%"></div>
-                        </div>
-                        <span class="score-num white">${total}</span>
-                    </div>
-                </td>
-            </tr>`;
-        }).join('');
-
-        const now = new Date();
-        document.getElementById('lb-updated').textContent =
-            `Last updated: ${now.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' })}`;
-    }
-
-    // Load SheetJS then fetch & parse the Excel file
-    const sheetScript = document.createElement('script');
-    sheetScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    sheetScript.onload = () => {
-        fetch('Leaderboard2026.xlsx')
-            .then(res => {
-                if (!res.ok) throw new Error('File not found');
-                return res.arrayBuffer();
-            })
-            .then(buffer => {
-                const workbook = XLSX.read(buffer, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                // Find header row containing "Name"
-                let headerIdx = rows.findIndex(r =>
-                    r.some(cell => String(cell).toLowerCase().trim() === 'name')
-                );
-                if (headerIdx === -1) headerIdx = 0;
-
-                const headerRow = rows[headerIdx].map(c => String(c).toLowerCase().trim());
-                const nameCol = headerRow.indexOf('name');
-                const codeCol = headerRow.indexOf('code');
-
-                // Detect week 1 and week 2 score columns flexibly
-                const w1Col = headerRow.findIndex(h =>
-                    h.includes('week 1') || h.includes('week1') || h === 'score week 1'
-                );
-                const w2Col = headerRow.findIndex(h =>
-                    h.includes('week 2') || h.includes('week2') || h === 'score week 2'
-                );
-
-                LEADERBOARD_DATA = rows.slice(headerIdx + 1)
-                    .filter(r => r[nameCol] && r[codeCol])
-                    .map(r => ({
-                        name:  String(r[nameCol] || '').trim(),
-                        code:  String(r[codeCol] || '').trim(),
-                        week1: Number(r[w1Col]) || 0,
-                        week2: w2Col >= 0 ? (Number(r[w2Col]) || 0) : 0,
-                    }));
-
-                renderLeaderboard();
-            })
-            .catch(err => {
-                document.getElementById('lb-tbody').innerHTML =
-                    `<tr><td colspan="6" class="lb-empty">⚠️ Could not load Leaderboard2026.xlsx — ${err.message}</td></tr>`;
-            });
-    };
-    document.head.appendChild(sheetScript);
-
-    renderLeaderboard(); // show "Loading..." immediately
-    document.getElementById('lb-search').addEventListener('input', e => renderLeaderboard(e.target.value));
-</script>
-</body>
-</html>
+print(f"Done! Saved as {out}")
