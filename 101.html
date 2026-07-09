@@ -1684,173 +1684,268 @@
         header.nextElementSibling.classList.toggle('open', !isOpen);
     }
 
-    // ════════════════════════════════════════════
-    // ── LEADERBOARD
-    // ✅ FIXED: MAX values and total correctly set
-    // Week 1 = /48, Week 2 = /46, Week 3 = /47, Total = /141
-    // ════════════════════════════════════════════
-    const MAX_W1 = 48;
-    const MAX_W2 = 43;
-    const MAX_W3 = 47;
-    const MAX_TOTAL = MAX_W1 + MAX_W2 + MAX_W3; // 141
+// ════════════════════════════════════════════
+// ── LEADERBOARD (UPDATED FOR WEEK 4)
+// Week 1 = /48
+// Week 2 = /43
+// Week 3 = /47
+// Week 4 = /50
+// Total  = /188
+// ════════════════════════════════════════════
 
-    let LEADERBOARD_DATA = [];
+const MAX_W1 = 48;
+const MAX_W2 = 43;
+const MAX_W3 = 47;
+const MAX_W4 = 50;
+const MAX_TOTAL = MAX_W1 + MAX_W2 + MAX_W3 + MAX_W4; // 188
 
-    function renderLeaderboard(filter = '') {
-        const tbody = document.getElementById('lb-tbody');
-        const q = filter.toLowerCase().trim();
+let LEADERBOARD_DATA = [];
 
-        // Sort by total score descending
-        const sorted = [...LEADERBOARD_DATA].sort(
-            (a, b) => (b.week1 + b.week2 + b.week3) - (a.week1 + a.week2 + a.week3)
-        );
+function renderLeaderboard(filter = '') {
+    const tbody = document.getElementById('lb-tbody');
+    const q = filter.toLowerCase().trim();
 
-        const filtered = sorted.filter(r =>
-            r.name.toLowerCase().includes(q) ||
-            r.code.toLowerCase().includes(q)
-        );
+    // Sort by total score
+    const sorted = [...LEADERBOARD_DATA].sort(
+        (a, b) =>
+            (b.week1 + b.week2 + b.week3 + b.week4) -
+            (a.week1 + a.week2 + a.week3 + a.week4)
+    );
 
-        if (LEADERBOARD_DATA.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="lb-empty">Loading scores...</td></tr>`;
-            return;
-        }
+    const filtered = sorted.filter(r =>
+        r.name.toLowerCase().includes(q) ||
+        r.code.toLowerCase().includes(q)
+    );
 
-        if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="lb-empty">No results found for "${filter}"</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = filtered.map(row => {
-
-            const rank = sorted.findIndex(r => r.code === row.code) + 1;
-            const rankClass = rank <= 3 ? `rank-${rank}` : '';
-            const medal =
-                rank === 1 ? '🥇' :
-                rank === 2 ? '🥈' :
-                rank === 3 ? '🥉' :
-                rank;
-
-            const pct1 = (row.week1 / MAX_W1 * 100).toFixed(1);
-            const pct2 = (row.week2 / MAX_W2 * 100).toFixed(1);
-            const pct3 = (row.week3 / MAX_W3 * 100).toFixed(1);
-            const total = row.week1 + row.week2 + row.week3;
-            const pctTotal = (total / MAX_TOTAL * 100).toFixed(1);
-
-            return `
-            <tr class="${rankClass}">
-                <td class="lb-rank-cell">
-                    <span class="rank-medal">${medal}</span>
-                </td>
-                <td class="lb-name-cell">${row.name}</td>
-                <td class="lb-code-cell hide-mobile">${row.code}</td>
-
-                <td class="lb-score-cell w1-col">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill" style="width:${pct1}%"></div>
-                        </div>
-                        <span class="score-num">${row.week1}</span>
-                    </div>
-                </td>
-
-                <td class="lb-score-cell w2-col hide-mobile">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill blue" style="width:${pct2}%"></div>
-                        </div>
-                        <span class="score-num blue">${row.week2}</span>
-                    </div>
-                </td>
-
-                <td class="lb-score-cell w3-col hide-mobile">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill purple" style="width:${pct3}%"></div>
-                        </div>
-                        <span class="score-num purple">${row.week3}</span>
-                    </div>
-                </td>
-
-                <td class="lb-score-cell">
-                    <div class="score-bar-wrap">
-                        <div class="score-bar-bg">
-                            <div class="score-bar-fill total" style="width:${pctTotal}%"></div>
-                        </div>
-                        <span class="score-num white">${total}</span>
-                    </div>
-                </td>
-            </tr>
-            `;
-        }).join('');
-
-        const now = new Date();
-        document.getElementById('lb-updated').textContent =
-            `Last updated: ${now.toLocaleDateString('en-IN', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-            })}`;
+    if (LEADERBOARD_DATA.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="lb-empty">Loading scores...</td></tr>`;
+        return;
     }
 
-    // Load SheetJS then fetch Excel
-    const sheetScript = document.createElement('script');
-    sheetScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    sheetScript.onload = () => {
-        fetch('Leaderboard2026.xlsx')
-            .then(res => {
-                if (!res.ok) throw new Error('File not found');
-                return res.arrayBuffer();
-            })
-            .then(buffer => {
-                const workbook = XLSX.read(buffer, { type: 'array' });
-                const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="lb-empty">No results found for "${filter}"</td></tr>`;
+        return;
+    }
 
-                let headerIdx = rows.findIndex(r =>
-                    r.some(cell => String(cell).toLowerCase().trim() === 'name')
+    tbody.innerHTML = filtered.map(row => {
+
+        const rank = sorted.findIndex(r => r.code === row.code) + 1;
+
+        const rankClass =
+            rank <= 3 ? `rank-${rank}` : '';
+
+        const medal =
+            rank === 1 ? '🥇' :
+            rank === 2 ? '🥈' :
+            rank === 3 ? '🥉' :
+            rank;
+
+        const pct1 = (row.week1 / MAX_W1 * 100).toFixed(1);
+        const pct2 = (row.week2 / MAX_W2 * 100).toFixed(1);
+        const pct3 = (row.week3 / MAX_W3 * 100).toFixed(1);
+        const pct4 = (row.week4 / MAX_W4 * 100).toFixed(1);
+
+        const total =
+            row.week1 +
+            row.week2 +
+            row.week3 +
+            row.week4;
+
+        const pctTotal = (total / MAX_TOTAL * 100).toFixed(1);
+
+        return `
+        <tr class="${rankClass}">
+
+            <td class="lb-rank-cell">
+                <span class="rank-medal">${medal}</span>
+            </td>
+
+            <td class="lb-name-cell">
+                ${row.name}
+            </td>
+
+            <td class="lb-code-cell hide-mobile">
+                ${row.code}
+            </td>
+
+            <!-- Week 1 -->
+            <td class="lb-score-cell w1-col">
+                <div class="score-bar-wrap">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill"
+                             style="width:${pct1}%"></div>
+                    </div>
+                    <span class="score-num">${row.week1}</span>
+                </div>
+            </td>
+
+            <!-- Week 2 -->
+            <td class="lb-score-cell w2-col hide-mobile">
+                <div class="score-bar-wrap">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill blue"
+                             style="width:${pct2}%"></div>
+                    </div>
+                    <span class="score-num blue">${row.week2}</span>
+                </div>
+            </td>
+
+            <!-- Week 3 -->
+            <td class="lb-score-cell w3-col hide-mobile">
+                <div class="score-bar-wrap">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill purple"
+                             style="width:${pct3}%"></div>
+                    </div>
+                    <span class="score-num purple">${row.week3}</span>
+                </div>
+            </td>
+
+            <!-- Week 4 -->
+            <td class="lb-score-cell w4-col hide-mobile">
+                <div class="score-bar-wrap">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill orange"
+                             style="width:${pct4}%"></div>
+                    </div>
+                    <span class="score-num orange">${row.week4}</span>
+                </div>
+            </td>
+
+            <!-- Total -->
+            <td class="lb-score-cell">
+                <div class="score-bar-wrap">
+                    <div class="score-bar-bg">
+                        <div class="score-bar-fill total"
+                             style="width:${pctTotal}%"></div>
+                    </div>
+                    <span class="score-num white">
+                        ${total}
+                    </span>
+                </div>
+            </td>
+
+        </tr>
+        `;
+    }).join('');
+
+    const now = new Date();
+
+    document.getElementById('lb-updated').textContent =
+        `Last updated: ${now.toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        })}`;
+}
+
+
+// Load SheetJS then fetch Excel
+
+const sheetScript = document.createElement('script');
+
+sheetScript.src =
+'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+
+sheetScript.onload = () => {
+
+    fetch('Leaderboard2026.xlsx')
+        .then(res => {
+
+            if (!res.ok)
+                throw new Error('File not found');
+
+            return res.arrayBuffer();
+
+        })
+        .then(buffer => {
+
+            const workbook =
+                XLSX.read(buffer, { type: 'array' });
+
+            const sheet =
+                workbook.Sheets[workbook.SheetNames[0]];
+
+            const rows =
+                XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            let headerIdx =
+                rows.findIndex(r =>
+                    r.some(cell =>
+                        String(cell).toLowerCase().trim() === 'name'
+                    )
                 );
-                if (headerIdx === -1) headerIdx = 0;
 
-                const headerRow = rows[headerIdx].map(c => String(c).toLowerCase().trim());
-                const nameCol = headerRow.indexOf('name');
-                const codeCol = headerRow.indexOf('code');
+            if (headerIdx === -1)
+                headerIdx = 0;
 
-                const w1Col = headerRow.findIndex(h =>
-                    h.includes('week 1') || h.includes('week1') || h === 'score week 1'
-                );
-                const w2Col = headerRow.findIndex(h =>
-                    h.includes('week 2') || h.includes('week2') || h === 'score week 2'
-                );
-                const w3Col = headerRow.findIndex(h =>
-                    h.includes('week 3') || h.includes('week3') || h === 'score week 3'
+            const headerRow =
+                rows[headerIdx].map(c =>
+                    String(c).toLowerCase().trim()
                 );
 
-                LEADERBOARD_DATA = rows
-                    .slice(headerIdx + 1)
-                    .filter(r => r[nameCol] && r[codeCol])
-                    .map(r => ({
-                        name:  String(r[nameCol] || '').trim(),
-                        code:  String(r[codeCol] || '').trim(),
-                        week1: Number(r[w1Col]) || 0,
-                        week2: Number(r[w2Col]) || 0,
-                        week3: Number(r[w3Col]) || 0
-                    }));
+            const nameCol = headerRow.indexOf('name');
+            const codeCol = headerRow.indexOf('code');
 
-                renderLeaderboard();
-            })
-            .catch(err => {
-                document.getElementById('lb-tbody').innerHTML =
-                    `<tr><td colspan="7" class="lb-empty">
-                    ⚠️ Could not load Leaderboard2026.xlsx — ${err.message}
-                    </td></tr>`;
-            });
-    };
-    document.head.appendChild(sheetScript);
+            const w1Col = headerRow.findIndex(h =>
+                h.includes('week 1') ||
+                h.includes('week1') ||
+                h === 'score week 1'
+            );
 
-    renderLeaderboard();
+            const w2Col = headerRow.findIndex(h =>
+                h.includes('week 2') ||
+                h.includes('week2') ||
+                h === 'score week 2'
+            );
 
-    document.getElementById('lb-search')
-        .addEventListener('input', e => renderLeaderboard(e.target.value));
+            const w3Col = headerRow.findIndex(h =>
+                h.includes('week 3') ||
+                h.includes('week3') ||
+                h === 'score week 3'
+            );
+
+            const w4Col = headerRow.findIndex(h =>
+                h.includes('week 4') ||
+                h.includes('week4') ||
+                h === 'score week 4'
+            );
+
+            LEADERBOARD_DATA = rows
+                .slice(headerIdx + 1)
+                .filter(r => r[nameCol] && r[codeCol])
+                .map(r => ({
+                    name: String(r[nameCol] || '').trim(),
+                    code: String(r[codeCol] || '').trim(),
+                    week1: Number(r[w1Col]) || 0,
+                    week2: Number(r[w2Col]) || 0,
+                    week3: Number(r[w3Col]) || 0,
+                    week4: Number(r[w4Col]) || 0
+                }));
+
+            renderLeaderboard();
+
+        })
+        .catch(err => {
+
+            document.getElementById('lb-tbody').innerHTML =
+                `<tr>
+                    <td colspan="8" class="lb-empty">
+                        ⚠️ Could not load Leaderboard2026.xlsx — ${err.message}
+                    </td>
+                </tr>`;
+
+        });
+
+};
+
+document.head.appendChild(sheetScript);
+
+renderLeaderboard();
+
+document.getElementById('lb-search')
+    .addEventListener('input',
+        e => renderLeaderboard(e.target.value));
 </script>
 </body>
 </html>
